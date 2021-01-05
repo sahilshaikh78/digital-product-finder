@@ -1,0 +1,511 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block title %} Account Settings Page - SuggestPoint {% endblock %}
+{% block keywords %} User Account Settings Page, Suggest Point {% endblock %}
+{% block description %} Know About Suggest Point best product, services and tools finding platform. {% endblock %}
+
+{% block content %} 
+
+<!--Section Start-->
+<section class="account_setting_page">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="account_left_navigation">
+                    <h1>My Account</h1><hr/>
+                    <ul>
+                        <li>
+                            <a href="/account/"><img src="{% static 'client-side-images/image/ac2.png' %}"/>My Profile</a>
+                        </li>
+                        <li>
+                            <a href="/account/update-password/"><img src="{% static 'client-side-images/image/ac4.png' %}"/>Update Password</a>
+                        </li>
+                        <li>
+                            <a href="/account/wishlist/"><img src="{% static 'client-side-images/image/ac3.png' %}"/>My Wishlist</a>
+                        </li>
+                        <li>
+                            <a href="/account/reviews/"><img src="{% static 'client-side-images/image/ac1.png' %}"/>My Review</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="account_setting_section">
+                    {% if setting == 'profile' %}
+                    <div class="heading_start">
+                        <h1>Account Settings</h1>
+                        <hr>
+                    </div>
+                    <div class="profile_main_content_start">
+                        <h2>Personal information</h2>
+
+                        <form id="profile_update">   
+                            {% csrf_token %}
+                            <div id="profile_update_alert"></div>
+                            <lable>First name</lable>
+                            <input type="text" class="form-control" name="first_name" id="first_name" value="{{ request.user.first_name }}" placeholder="Enter First name" required/>
+                            <br/>
+                            <lable>Last name</lable>
+                            <input type="text" class="form-control" name="last_name" id="last_name" value="{{ request.user.last_name }}" placeholder="Enter Last name"/>
+                            <br/><input type="submit" name="submit" class="master_btn btn" value="Update Personal Information"/>
+                        </form>
+                    </div> 
+                    {% elif setting == 'password' %}
+                        <div class="heading_start">
+                            <h1>Update Password</h1>
+                            <hr>
+                        </div>
+                        <div class="profile_main_content_start">
+                            <img src="{% static 'client-side-images/image/cd.png' %}" class="img-responsive change_password_img"/>
+                            {% if social_auth == 'yes' %}
+
+                            {% else %}
+                                <p>Do you want to change your password?</p>    
+                                <p>Change it by using the given button</p>
+                                <center>    
+                                <a href="/account/change-password/" class="btn btn-md base_btn">Change Password</a>
+                                </center>
+                            {% endif %}
+                        </div>
+                        {% elif setting == 'wishlist' %}
+                        <div class="heading_start">
+                            <h1>My Wishist</h1>
+                            <hr>
+                        </div>
+                        {% if wishlist_data %}
+                        <div class="profile_main_content_start">
+                            {% for data in wishlist_data%}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="wishlist_item_box">
+                                            <div class="row">
+                                                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                                                    <div class="img-container">
+                                                        <img src="/media/{{ data.brand.brand_logo }}"  alt="{{ data.brand.brand_logo_alt_text }}" class="text-center img-fluid"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <h3>{{ data.brand.brand_name }}</h3>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <a href="/{{ data.brand.category.category_slug }}-reviews/{{ data.brand.brand_slug }}/">
+                                                        <button class="btn master_btn">View More</button>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="profile_main_content_start">
+                            <img src="{% static 'client-side-images/image/whishlist.png' %}" class="img-responsive change_password_img"/>
+                            <p>Your wishlist is currently empty.</p>    
+                            <p>Simply add your favourite items in the wishlist by exploring categories.</p>
+                            <center>    
+                            <a href="/categories/" class="btn btn-md base_btn">Add Product</a>
+                            </center>
+                        </div>
+                        {% endif %}
+                        {% elif setting == 'review' %}
+                        <div class="heading_start">
+                            <h1>My Review</h1>
+                            <hr>
+                        </div>
+                        {% if review_data %}
+                        <div class="profile_main_content_start">
+                            {% for review, brand in review_data%}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="wishlist_item_box">
+                                            <div class="row">
+                                                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                                                    <div class="img-container">
+                                                        <img src="/media/{{ brand.brand_logo }}"  alt="{{ brand.brand_logo_alt_text }}" class="text-center img-fluid"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <h3>{{ brand.brand_name }}</h3>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <a href="/{{ brand.category.category_slug }}-reviews/{{ brand.brand_slug }}/">
+                                                        <button class="btn master_btn">View More</button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="col-md-5 review_left_part">
+                                                    <p class="review_user_name">{{ review.user.username|title }}</p>
+                                                <div class="user_rating_box">
+                                                    <div class="user_rating_box_left">
+                                                        <p>Features</p>
+                                                    </div>
+                                                    <div class="user_rating_box_right">
+                                                    {% if review.features_rating == 5  %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    {% elif review.features_rating == 4.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    {% elif review.features_rating == 4 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.features_rating == 3.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.features_rating == 3 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.features_rating == 2.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>  
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.features_rating == 2 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.features_rating == 1.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+
+                                                    {% endif %}
+
+                                                    </div>
+                                                </div>
+                                                <div class="user_rating_box">
+                                                    <div class="user_rating_box_left">
+                                                        <p>Value for Money</p>
+                                                    </div>
+                                                    <div class="user_rating_box_right">
+                                                    {% if review.value_for_money_rating == 5  %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    {% elif review.value_for_money_rating == 4.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    {% elif review.value_for_money_rating == 4 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.value_for_money_rating == 3.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.value_for_money_rating == 3 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.value_for_money_rating == 2.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>  
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.value_for_money_rating == 2 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.value_for_money_rating == 1.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+
+                                                    {% endif %}
+
+                                                    </div>
+                                                </div>
+                                                <div class="user_rating_box">
+                                                    <div class="user_rating_box_left">
+                                                        <p>Ease of Use</p>
+                                                    </div>
+                                                    <div class="user_rating_box_right">
+                                                    {% if review.ease_of_use_rating == 5  %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    {% elif review.ease_of_use_rating == 4.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    {% elif review.ease_of_use_rating == 4 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.ease_of_use_rating == 3.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.ease_of_use_rating == 3 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.ease_of_use_rating == 2.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>  
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.ease_of_use_rating == 2 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.ease_of_use_rating == 1.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+
+                                                    {% endif %}
+
+                                                    </div>
+                                                </div>
+                                                <div class="user_rating_box">
+                                                    <div class="user_rating_box_left">
+                                                        <p>Customer Support</p>
+                                                    </div>
+                                                    <div class="user_rating_box_right">
+                                                    {% if review.customer_support_rating == 5  %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    {% elif review.customer_support_rating == 4.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    {% elif review.customer_support_rating == 4 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.customer_support_rating == 3.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.customer_support_rating == 3 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.customer_support_rating == 2.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>  
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.customer_support_rating == 2 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif review.customer_support_rating == 1.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+
+                                                    {% endif %}
+
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <h3 class="review_title">{{ review.review_title|title }}</h3><br/>
+                                                    <p class="review_desc">{{ review.review }}</p>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <button class="btn btn-danger btn-sm" id="delete_model_btn" style="float: right;" data-toggle="modal" data-id="{{ review.review_id }}" data-target="#myModal"><i class="fas fa-trash-alt"></i> Delete</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="profile_main_content_start">
+                            <img src="{% static 'client-side-images/image/whishlist.png' %}" class="img-responsive change_password_img"/>
+                            <p>Your wishlist is currently empty.</p>    
+                            <p>Simply add your favourite items in the wishlist by exploring categories.</p>
+                            <center>    
+                            <a href="/categories/" class="btn btn-md base_btn">Add Product</a>
+                            </center>
+                        </div>
+                        {% endif %}
+
+                    {% endif %}   
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--end About Section Start-->
+
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">			
+				<h4 class="modal-title">Delete Review Confirmation</h4>	
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <form id="delete_review_form">
+                {% csrf_token %}
+			<div class="modal-body">
+                <p>Are you sure you want to this review? This action cannot be undone and you will be unable to recover review.</p>
+                <input type="hidden" id="review_id" name="review_id"/>
+			</div>
+			<div class="modal-footer">
+                <a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
+				<button type="submit" class="btn btn-danger" id="submit" name="submit">Yes, delete it!</button>
+            </div>
+            </form>
+		</div>
+	</div>
+</div>   
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+
+    $(document).on('submit','#profile_update',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/personal_info_update/',
+            data : { 
+                first_name: $('#first_name').val(),
+                last_name: $('#last_name').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                $('#master_loader').hide();
+                $("#profile_update_alert").html("Your changes have been saved!"); 
+                $("#profile_update_alert").addClass("alert alert-success");
+            },
+        });
+    })
+//to add bootstrap form-control to all input field
+$( "input" ).addClass( "form-control" );
+
+$(document).on("click", "#delete_model_btn", function () {
+    var id = $(this).attr('data-id');
+    $(".modal-body #review_id").val(id);
+})
+
+$(document).on('submit','#delete_review_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '/delete_user_review/',
+            data : { 
+                review_id : $('#review_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if(data.deleted){
+                    alert("Review Deleted Successfully!");
+                    location.reload();
+                }else{
+                    alert("Oops! Something went wrong please try again");
+                    location.reload();
+                }
+            },
+        });
+    })
+
+</script>
+
+{% endblock %}
+
+

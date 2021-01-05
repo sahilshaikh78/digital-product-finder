@@ -1,0 +1,125 @@
+{% extends 'admin_master.html' %}
+{% block title %} Brand List - SuggestPoint {% endblock %}
+{% block keywords %} Brand, Suggest Point {% endblock %}
+{% block content %} 
+
+
+      <div class="container-fluid">
+
+
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="heading_start">
+            <h1>Brands</h1>
+            <hr>
+            <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                      <i class="fas fa-th"></i>
+                      Brands</div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th>Brand</th>
+                              <th>Title</th>
+                              <th>Slug</th>
+                              <th>Category</th>
+                              <th>Country</th>
+                              <th>Status</th>
+                              <th>Edit</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% if brand_data %}
+
+                            {% for data in brand_data %}
+                                <tr>
+                                    <td><img src="/media/{{ data.brand_logo }}" style="max-width:100px;max-height:50px;width: auto;height:auto"/> {{ data.brand_name }}</td>
+                                    <td>{{ data.brand_title }}</td>
+                                    <td>{{ data.brand_slug }}</td>
+                                    <td>{{ data.category }}</td>
+                                    <td>{{ data.country }}</td>
+                                    <td>{{ data.brand_status }}</td>
+                                    <td>
+                                      <a href="/sp-admin/brand/edit/{{ data.brand_id }}/"><button class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Edit</button></a>
+                                    </td>
+                                    <td><center><button class="btn btn-danger btn-sm" id="delete_modal_btn" data-toggle="modal" data-id="{{ data.brand_id }}" data-target="#myModal"><i class="fas fa-trash"></i> Delete</button></center></td>
+                                </tr>
+                            {% endfor %}
+                            {% else %}
+                                <div class="alert alert-danger">Opps! no data found</div>
+                            {% endif %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="card-footer small text-muted"></div>
+            </div>
+        </div>
+        </div> 
+        </div>
+        <br/>
+
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">			
+				<h4 class="modal-title">Delete Brand Confirmation</h4>	
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <form id="delete_brand_form">
+                {% csrf_token %}
+                  <div class="modal-body">
+                            <p>Are you sure you want delete to this brand? </p>
+                            <input type="hidden" id="brand_id" name="brand_id"/>
+                  </div>
+                  <div class="modal-footer">
+                            <a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger" id="submit" name="submit">Yes, delete it!</button>
+                  </div>
+            </form>
+		</div>
+	</div>
+</div>
+    
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).on("click", "#delete_modal_btn", function () {
+    var id = $(this).attr('data-id');
+    $(".modal-body #brand_id").val(id);
+})
+
+$(document).on('submit','#delete_brand_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/brand/delete/',
+            data : { 
+                brand_id : $('#brand_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if(data.deleted){
+                    alert("Brand Deleted Successfully!");
+                    location.reload();
+                }else{
+                    alert("Oops! Something went wrong please try again");
+                    location.reload();
+                }
+            },
+        });
+    })
+</script>
+{% endblock %}

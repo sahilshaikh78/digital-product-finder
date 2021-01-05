@@ -1,0 +1,340 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block title %} {{ product_type_res1.product_type_title }} - SuggestPoint {% endblock %}
+{% block keywords %} Product search, SuggestPoint {% endblock %}
+{% block description %} Know About Suggest Point best product, services and tools finding platform. {% endblock %}
+
+{% block content %} 
+<section>
+    <div class="container-fluid">
+        <div class="search_section">
+            {% if result_count == 0 %}
+                <center>
+                    <h1>Opps! Your search - {{ product_type_res1.product_type_title }} Not Found.</h1>
+                    <img src="{% static 'client-side-images/image/no_result.gif' %}" class="img-responsive change_password_img"/>
+                </center>
+            {% else %}
+                <h1>{{ result_count }} {{ product_type_res1.product_type_title }} in {% now 'Y' %}</h1>
+            {% endif %}
+
+            <span id="cat_for_compare">{{ product_type_res1.category.category_slug }}</span>
+            <div class="row">
+                <div class="col-sm-9">
+                    {% for data in product_result %}
+                    <div class="product pt-2">
+                        <div class="row">
+                            <div class="col-md-3 d-flex align-items-center justify-content-center">
+                                <div class="img-container">
+                                    <img src="/media/{{ data.brand.brand_logo }}"  alt="{{ data.brand.brand_logo_alt_text }}" class="text-center img-fluid"/>
+                                  
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="product-info">
+                                    <div class="product-content">
+                                        <h4 id="namebr{{ data.brand_id }}">{{ data.brand.brand_name }}</h4>
+                                        {% for key,value in review_data.items %}
+                                    
+                                        {% if key == data.brand_id %}
+                                            <div class="rating">
+                                                {% if value == 5  %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                {% elif value == 4.5 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>                                                  
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                {% elif value == 4 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>                                                  
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% elif value == 3.5 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>                                                  
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% elif value == 3 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>                                                  
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% elif value == 2.5 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>  
+                                                    <i class="fas fa-star-half-alt"></i>                                                
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% elif value == 2 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>                                                  
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% elif value == 1.5 %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star-half-alt"></i>                                                
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% elif value == 1.0 %}
+
+                                                {% else %}
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                        <span class="starting_price">Starting Price:</span>
+                                        <span class="search_brand_price">
+                                            {{ data.currency.currency_symbol }}{{ data.product_price }}{% if data.product_subscription == 'm' %}/month{% else %}/year{% endif %}
+
+                                        </span>
+                                        <p>{{ data.brand.brand_description | truncatechars:200 }}</p>
+                                        {% if data.product_features.all %}
+                                        <div class="search_product_features">Features:</div>
+                                        {% endif %}
+                                        <ul class="product_list_ul">
+                                        {% for feature in data.product_features.all %}
+                                        {% if feature.feature.feature_has_value == 'n' %}
+                                          <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ feature.feature.feature_name }}: 
+                                              {% if feature.product_feature_value == 'y' %}
+                                                  Yes
+                                              {% else %}
+                                              No
+                                              {% endif %}
+                                          </li>       
+                                        {% else %}
+                                          <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ feature.feature.feature_name }}: 
+                                              {{ feature.product_feature_value }}</li>
+                                        {% endif %}
+  
+                                        {% endfor %}
+                                        </ul>
+                                        <center>
+                                        <div class="buttons">
+                                          <a href="https://{{ data.brand.brand_website }}" target="blank" class="btn btn-lg buy">Buy Now</a>
+                                          <a class="btn btn-lg profile" href="/{{ category_data.category_slug }}-reviews/{{ data.brand.brand_slug }}/">Know More</a>
+                                          <button class="btn btn-success btn-lg compare" id="{{ data.brand_id }}">Added to Compare</button>
+  
+                                          
+                                        </div>
+                                      </center>
+                                      </div>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+              <br/>
+                {% endfor %}
+                   {% if product_result.has_other_pages %}
+                    <ul class="pagination pagination-md">
+                        {% if product_result.has_previous %}
+                            <li class="page-item">
+                                <a href="?page={{ product_result.previous_page_number }}" class="page-link">&laquo; Previous</a>
+                            </li>
+                        {% endif %}
+                        {% for p in product_result.paginator.page_range %}
+                            {% if product_result.number == p %}
+                                <li class="page-item active">
+                                    <a href="?page={{ p }}" class="page-link">{{ p }}</a>
+                                </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a href="?page={{ p }}" class="page-link">{{ p }}</a>
+                            </li>
+                            {% endif %}          
+                        {% endfor %}
+                        {% if product_result.has_next %}
+                            <li class="page-item">
+                                <a href="?page={{ product_result.next_page_number }}" class="page-link">Next &raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% if result_count != 0 %}
+                <div class="col-sm-3">
+                    <div class="side_bar_widgets">
+                        <div class="product_type">
+                        <h3>Related {{ category_data.category_name }}</h3>
+                        {% for data in product_type_data %}
+                        <hr/>
+                            <a href="/category/{{ category_data.category_slug }}/{{ data.product_type_slug }}/">{{ data.product_type_name }}</a>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if result_count != 0 %}
+                <div class="col-md-12">
+                    <br/>
+                    <div class="overview_box" id="top_products">
+                        <h2>Top Trending {{ category_data.category_name }}</h2>
+                        <hr/>
+                        <div class="row">
+                            <div class="MultiCarousel" data-items="1,3,5,4" data-slide="1" id="MultiCarousel"  data-interval="1000">
+                                <div class="MultiCarousel-inner">
+                                    {% for alternative in top_brands.all %}
+                                    <div class="card mb-4 box-shadow">
+
+                                    {% if alternative.products.all %}
+                                        <div class="card-header">
+                                            <h4 class="my-0 font-weight-normal">{{ alternative.brand_name }}</h4>
+                                        </div>
+                                    {% endif %}
+                                        {% for product in alternative.products.all %}
+                                        <div class="card-body">
+                                            <h1><b>{{ product.currency.currency_symbol }}{{ product.product_price }}</b>{% if product.product_subscription == 'm' %}<small class="text-muted">/month</small>{% elif product.product_subscription == 'y' %}<small class="text-muted">/year</small>{% endif %}
+                                                </h1>
+                                            <ul class="list-unstyled mt-3 mb-4">
+                                                {% for feature in product.product_features.all %}
+                                                <li><i class="fas fa-check"></i> {{ feature.product_feature_value| title }} {{ feature.feature.feature_name }}</li>
+                                                {% endfor %}
+                                            </ul> 
+                                            <a href="/{{ product.brand.category.category_slug }}-reviews/{{ product.brand.brand_slug }}/ ">
+                                                <button type="button" class="btn btn-lg btn-block base_btn">View Details</button>
+                                            </a>
+                                        </div>
+                                        {% endfor %}
+
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <button class="btn base_btn leftLst"><i class="fas fa-arrow-left"></i></button>
+                                <button class="btn base_btn rightLst"><i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<!--end About Section Start-->
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+    var itemsMainDiv = ('.MultiCarousel');
+    var itemsDiv = ('.MultiCarousel-inner');
+    var itemWidth = "";
+
+    $('.leftLst, .rightLst').click(function () {
+        var condition = $(this).hasClass("leftLst");
+        if (condition)
+            click(0, this);
+        else
+            click(1, this)
+    });
+
+    ResCarouselSize();
+
+
+    $(window).resize(function () {
+        ResCarouselSize();
+    });
+
+    //this function define the size of the items
+    function ResCarouselSize() {
+        var incno = 0;
+        var dataItems = ("data-items");
+        var itemClass = ('.card');
+        var id = 0;
+        var btnParentSb = '';
+        var itemsSplit = '';
+        var sampwidth = $(itemsMainDiv).width();
+        var bodyWidth = $('body').width();
+        $(itemsDiv).each(function () {
+            id = id + 1;
+            var itemNumbers = $(this).find(itemClass).length;
+            btnParentSb = $(this).parent().attr(dataItems);
+            itemsSplit = btnParentSb.split(',');
+            $(this).parent().attr("id", "MultiCarousel" + id);
+
+
+            if (bodyWidth >= 1200) {
+                incno = itemsSplit[3];
+                itemWidth = sampwidth / incno;
+            }
+            else if (bodyWidth >= 992) {
+                incno = itemsSplit[2];
+                itemWidth = sampwidth / incno;
+            }
+            else if (bodyWidth >= 768) {
+                incno = itemsSplit[1];
+                itemWidth = sampwidth / incno;
+            }
+            else {
+                incno = itemsSplit[0];
+                itemWidth = sampwidth / incno;
+            }
+            $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+            $(this).find(itemClass).each(function () {
+                $(this).outerWidth(itemWidth);
+            });
+
+            $(".leftLst").addClass("over");
+            $(".rightLst").removeClass("over");
+
+        });
+    }
+
+
+    //this function used to move the items
+    function ResCarousel(e, el, s) {
+        var leftBtn = ('.leftLst');
+        var rightBtn = ('.rightLst');
+        var translateXval = '';
+        var divStyle = $(el + ' ' + itemsDiv).css('transform');
+        var values = divStyle.match(/-?[\d\.]+/g);
+        var xds = Math.abs(values[4]);
+        if (e == 0) {
+            translateXval = parseInt(xds) - parseInt(itemWidth * s);
+            $(el + ' ' + rightBtn).removeClass("over");
+
+            if (translateXval <= itemWidth / 2) {
+                translateXval = 0;
+                $(el + ' ' + leftBtn).addClass("over");
+            }
+        }
+        else if (e == 1) {
+            var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+            translateXval = parseInt(xds) + parseInt(itemWidth * s);
+            $(el + ' ' + leftBtn).removeClass("over");
+
+            if (translateXval >= itemsCondition - itemWidth / 2) {
+                translateXval = itemsCondition;
+                $(el + ' ' + rightBtn).addClass("over");
+            }
+        }
+        $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
+    }
+
+    //It is used to get some elements from btn
+    function click(ell, ee) {
+        var Parent = "#" + $(ee).parent().attr("id");
+        var slide = $(Parent).attr("data-slide");
+        ResCarousel(ell, Parent, slide);
+    }
+
+});
+</script>
+{% endblock %}

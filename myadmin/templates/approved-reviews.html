@@ -1,0 +1,128 @@
+{% extends 'admin_master.html' %}
+{% block title %} Approved Reviews - SuggestPoint {% endblock %}
+{% block keywords %} Approved Reviews, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="heading_start">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1><a href="/sp-admin/review/"><i class="fas fa-arrow-left" style="font-size: 40px;"></i></a> Approved Reviews</h1>
+                </div>
+                <div class="col-md-6">
+                </div>
+            </div>
+
+            <hr>
+            <div class="row">
+
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                      <i class="fas fa-th"></i>
+                      Approved Reviews</div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th>Username</th>
+                              <th>Brand Name</th>
+                              <th>Review Title</th>
+                              <th>Review</th>
+                              <th>Overall Rating</th>
+                              <th>Date</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% if review_data %}
+
+                            {% for data in review_data %}
+                                <tr>
+                                    <td>{{ data.user.username }}</td>
+                                    <td>{{ data.brand.brand_name }}</td>
+                                    <td>{{ data.review_title }}</td>
+                                    <td>{{ data.review }}</td>
+                                    <td>{{ data.overall_rating }}</td>
+                                    <td>{{ data.created_at }}</td>
+                                    <td><center><button class="btn btn-danger btn-sm" id="delete_modal_btn" data-toggle="modal" data-id="{{ data.review_id }}" data-target="#myModal"><i class="fas fa-trash"></i> Delete</button></center></td>
+                                </tr>
+                            {% endfor %}
+                            {% else %}
+                                <div class="alert alert-danger">Opps! no data found</div>
+                            {% endif %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="card-footer small text-muted"></div>
+            </div>
+        </div>
+        </div> 
+        </div>
+        <br/>
+
+
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">			
+				<h4 class="modal-title">Delete Review Confirmation</h4>	
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <form id="delete_review_form">
+                {% csrf_token %}
+			<div class="modal-body">
+                <p>Are you sure you want to delete this Review? </p>
+                <input type="hidden" id="review_id" name="review_id"/>
+			</div>
+			<div class="modal-footer">
+                <a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
+				<button type="submit" class="btn btn-danger" id="submit" name="submit">Yes, delete it!</button>
+            </div>
+            </form>
+		</div>
+	</div>
+</div>   
+    
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+	$(document).on("click", "#delete_modal_btn", function () {
+    var id = $(this).attr('data-id');
+    $(".modal-body #review_id").val(id);
+})
+
+$(document).on('submit','#delete_review_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/review/delete/',
+            data : { 
+                review_id : $('#review_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if(data.deleted){
+                    alert("Review Deleted Successfully!");
+                    location.reload();
+                }else{
+                    alert("Oops! Something went wrong please try again");
+                    location.reload();
+                }
+            },
+        });
+    })
+
+</script>
+{% endblock %}

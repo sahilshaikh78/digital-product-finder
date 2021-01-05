@@ -1,0 +1,295 @@
+{% extends 'master.html' %}
+{% block title %} Review & Rating - SuggestPoint {% endblock %}
+{% block keywords %} Review & Rating, SuggestPoint {% endblock %}
+{% block description %} Know About Suggest Point best product, services and tools finding platform. {% endblock %}
+
+{% block content %} 
+<section>
+        <div class="review_page">
+            <div class="profile_section">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/category/{{ category_url }}">{{ category_url|title }}</a></li>
+                                <li class="breadcrumb-item"><a href="/{{ category_url }}-reviews/{{ brand_path }}">Review</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{{ request.path }}">{{ brand_path|title }}</a></li>
+                              </ol>
+                        </div>
+                    </div>
+                    <div id="update_alert"></div>
+
+                        {% if request.user.id %}
+                         {% if  user_review_exists %}
+                            <div class="overview_box">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <center>
+                                            <h3>You have already reviewed {{ brand_data.brand_name }}</h3>
+                                            <hr/>
+                                            <b><em>So, you're not allowed to add another review for this product</em></b>
+                                            <br/><br/>
+                                        <a href="/account/reviews/"><button class="master_btn btn"><b>Check Your Review</b></button></a>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    <div class="overview_box" id="overview">
+                                        <form id="review_form">
+                                            {% csrf_token %}
+                                        <h2>Write your opinion! Review {{ brand_data.brand_name }} now</h2>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6"> 
+                                                <p>Features</p>
+                                                <div id="features"></div>
+                                                <div class="counter"></div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                                <p>Value for money</p>
+                                                <div id="value_for_money"></div>
+                                                <div class="counter"></div>
+                                            </div><hr/>
+                                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                                <p>Ease of use</p>
+                                                <div id="ease_of_use"></div>
+                                                <div class="counter"></div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                                <p>Customer support</p>
+                                                <div id="customer_support"></div>
+                                                <div class="counter"></div>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <input type="hidden" name="brand_id" id="brand_id" value="{{ brand_data.brand_id }}"/>
+                                        <input type="hidden" name="features_count" id="features_count" value=""/>
+                                        <input type="hidden" name="value_for_money_count" id="value_for_money_count" value=""/>
+                                        <input type="hidden" name="ease_of_use_count" id="ease_of_use_count" value=""/>
+                                        <input type="hidden" name="customer_support_count" id="customer_support_count" value=""/>
+
+                                        <div class="col-md-12">
+                                            <lable>Review title</lable>
+                                            <input type="text" name="review_title" id="review_title" class="form-control" maxlength="50" placeholder="Enter Review Title (no more then 50 characters)" required>
+                                        </div>
+                                        <br/>
+                                        <div class="col-md-12">
+                                            <lable>Your review</lable>
+                                            <textarea rows='6' name="review_body" id="review_body" class="form-control" placeholder="Share your genuine experience, and help others make best choice" required></textarea>    
+                                        </div>
+                                        <br/>
+                                        <div class="offset-md-2 col-md-8 offset-md-2">
+                                            <button type="submit" class="form-control master_btn" id="submit_btn" name="submit"><span id="loader"></span> Post your review now</button>
+                                        </div>
+                                    </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                                    <div class="col-md-4">
+                                        <div class="review_note">
+                                            <h3><i class="fas fa-thumbs-up" style="color:#150773"></i> What Makes a Good Review</h3>
+                                            <hr/>
+                                            <ul>
+                                                <li>
+                                                    <i class="fas fa-check"></i> Write your true experience with product
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-check"></i> Give a suitable title to your review
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-check"></i> The more detailed, the better
+                                                </li> 
+                                            </ul>
+                                            <br/>
+                                            <ul>
+                                                <li>
+                                                    <i class="fas fa-times"></i> Don't use coarse & inappropriate language
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-times"></i> No accusations that can't be proven
+                                                </li>
+                                                <li>
+                                                    <i class="fas fa-times"></i> Don't write wrong review
+                                                </li> 
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% endif %}
+
+                                    {% else %}
+                                    <div class="overview_box">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <center>
+                                                    <h3>Login or Register to Review for {{ brand_data.brand_name }}</h3>
+                                                    <hr/>
+                                                    <b><em>You must be logged in to rate & review products!</em></b>
+                                                    <br/><br/>
+                                                <a href="/login/?next={{request.path}}"><button class="master_btn btn"><b>LOGIN</b></button></a>
+                                                <p>or</p>
+                                                <a href="/register/?next={{request.path}}"><button class="master_btn btn"><b>REGISTER</b></button></a>
+                                                </center>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                  </div>    
+                   
+                </div>
+            </div>
+        </div>
+</section>
+{% endblock %}
+<!--end About Section Start-->
+{% block js %}
+<script>
+
+
+
+
+$(function () {
+ 
+ $("#features").rateYo({
+    halfStar: true,
+   onChange: function (rating, rateYoInstance) {
+     $(this).next().text(rating+' stars');
+     $('#features_count').val(rating);
+   }
+ });
+ $("#value_for_money").rateYo({
+    halfStar: true,
+   onChange: function (rating, rateYoInstance) {
+     $(this).next().text(rating+' stars');
+     $('#value_for_money_count').val(rating);
+   }
+ });
+ $("#ease_of_use").rateYo({
+    halfStar: true,
+   onChange: function (rating, rateYoInstance) {
+     $(this).next().text(rating+' stars');
+     $('#ease_of_use_count').val(rating);
+
+   }
+ });
+ $("#customer_support").rateYo({
+    halfStar: true,
+   onChange: function (rating, rateYoInstance) {
+     $(this).next().text(rating+' stars');
+     $('#customer_support_count').val(rating);
+   }
+ });
+});
+
+$(document).on('submit','#review_form',function(e){
+        e.preventDefault();
+        var delay = 2000;
+        var features_count = $('#features_count').val();
+        var value_for_money_count = $('#value_for_money_count').val();
+        var ease_of_use_count = $("#ease_of_use_count").val();
+        var customer_support_count = $("#customer_support_count").val();
+        var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+        if(features_count != 0 && features_count != '' && value_for_money_count != 0  && value_for_money_count != ''
+        && ease_of_use_count != 0  && ease_of_use_count != '' 
+        && customer_support_count != 0  && customer_support_count != ''){
+        document.getElementById("submit_btn").disabled = true;
+        $('#loader').addClass('spinner-border text-muted');
+        $.ajax({
+            type:'POST',
+            url: '/review/save_review/',
+            headers:{
+                "X-CSRFToken": csrftoken
+            },
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+            success: function(data) {
+              if (data.review_added) {
+                  setTimeout(function() {
+                    delaySuccess(data);
+                  }, delay);
+              }else if(data.not_added){
+                  $('#loader').removeClass('spinner-border text-muted');
+                  document.getElementById("submit_btn").disabled = false;
+                  $("html, body").animate({ scrollTop: 0 }, "slow");
+                  $("#update_alert").removeClass("alert alert-success"); 
+                  $("#update_alert").removeClass("alert alert-danger"); 
+                  $("#update_alert").html("Opps! Something Went wrong please try again!"); 
+                  $("#update_alert").addClass("alert alert-warning");
+              }else if(data.exists){
+                  $('#loader').removeClass('spinner-border text-muted');
+                  document.getElementById("submit_btn").disabled = false;
+                  $("html, body").animate({ scrollTop: 0 }, "slow");
+                  $("#update_alert").removeClass("alert alert-success"); 
+                  $("#update_alert").removeClass("alert alert-warning"); 
+                  $("#update_alert").html("Review already Exists!"); 
+                  $("#update_alert").addClass("alert alert-danger");
+              }
+              else{
+                $('#loader').removeClass('spinner-border text-muted');
+                document.getElementById("submit_btn").disabled = false;
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+        }else{
+        if(features_count == 0 && features_count == ''){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Rate Features Rating."); 
+            $("#update_alert").addClass("alert alert-danger");
+        }else if(value_for_money_count == 0  && value_for_money_count == ''){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Rate Value for money Rating."); 
+            $("#update_alert").addClass("alert alert-danger");
+        }else if(ease_of_use_count == 0  && ease_of_use_count == '' ){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Rate Ease to use Rating."); 
+            $("#update_alert").addClass("alert alert-danger");
+        }else if(customer_support_count == 0  && customer_support_count == ''){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Rate Customer Support Rating."); 
+            $("#update_alert").addClass("alert alert-danger");
+        }else{
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+            $("#update_alert").addClass("alert alert-danger");
+        }
+    }
+
+});
+
+    function delaySuccess(data) {
+    $('#loader').removeClass('spinner-border text-primary');
+    document.getElementById("submit_btn").disabled = false;
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    $("#update_alert").removeClass("alert alert-warning"); 
+    $("#update_alert").removeClass("alert alert-danger"); 
+    $("#update_alert").html("Review Added Successfully!"); 
+    $("#update_alert").addClass("alert alert-success");
+}
+
+    </script>
+{% endblock %}
+
+

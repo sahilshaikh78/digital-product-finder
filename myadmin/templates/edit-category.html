@@ -1,0 +1,83 @@
+{% extends 'admin_master.html' %}
+{% block title %} Edit Category - SuggestPoint {% endblock %}
+{% block keywords %} Edit Category, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="profile_page">
+                    <div class="heading_start">
+                        <h1>Edit Category</h1>
+                        <hr>
+                    </div>
+                    <div class="profile_main_content_start">
+                        <form id="edit_category_form">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <input type="text" class="form-control" name="edit_category_name" id="edit_category_name" value="{{ category_data.category_name }}" placeholder="Enter Category Name" required/>
+                            <br/>
+                            <input type="text" class="form-control" name="edit_category_title" id="edit_category_title" value="{{ category_data.category_title }}" placeholder="Enter Category Title" required/>
+                            <br/>
+                            <input type="text" class="form-control" name="edit_category_slug" id="edit_category_slug" value="{{ category_data.category_slug }}" placeholder="Enter Category Slug"/>
+                            <input type="hidden" name="category_id" id="category_id" value="{{ category_data.category_id }}"/>
+                            <em>The “slug” is the URL-friendly version of the category name. It is usually all lowercase and contains only letters, numbers, and hyphens.</em>
+                            <br/><br/><input type="submit" name="submit" class="master_btn btn btn-success" value="Update Category"/>
+                        </form>
+                        <br/>
+                    </div>          
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      
+ 
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).on('submit','#edit_category_form',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/category/update/',
+            data : { 
+                edit_category_name: $('#edit_category_name').val().trim(),
+                edit_category_title: $('#edit_category_title').val().trim(),
+                edit_category_slug : $('#edit_category_slug').val().trim(),
+                category_id : $('#category_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+              if (data.updated) {
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Category Updated Successfully!"); 
+                $("#update_alert").addClass("alert alert-success");
+              }else if(data.is_taken){
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Category already Exists!"); 
+                $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check category data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

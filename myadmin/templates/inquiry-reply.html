@@ -1,0 +1,84 @@
+{% extends 'admin_master.html' %}
+{% block title %} Inquiry Reply - SuggestPoint {% endblock %}
+{% block keywords %} Inquiry Reply, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="profile_page">
+                    <div class="heading_start">
+                        <h1>Inquiry Reply</h1>
+                        <hr>
+                    </div>
+                    <div class="profile_main_content_start">
+                        <h3>Inquiry information</h3>
+                        <ul>
+                            <li>Name: {{ inquiry_data.name }}</li>
+                            <li>Email: {{ inquiry_data.email }}</li>
+                            <li>Mobile: {{ inquiry_data.mobile }}</li>
+                            <li>Message: {{ inquiry_data.message }}</li>
+                            <li>Status: {{ inquiry_data.status }}</li>
+
+                        </ul>
+                        <form id="inquiry_reply_form" method="POST">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <lable style="font-weight:bold">Reply:</lable>
+                            <input type="hidden" name="contact_id" id="contact_id" value="{{ inquiry_data.contact_id }}"/>
+                            <textarea rows="8" class="form-control" name="reply" id="reply" required></textarea>
+                            <br/>
+                            <button type="submit" name="submit" id="submit" class="master_btn btn"><span id="save_loader"></span> <i class="fas fa-reply"></i> Send Reply</button>
+                        </form>
+                        <br/>
+                    </div>          
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      
+ 
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+
+    $(document).on('submit','#inquiry_reply_form',function(e){
+        e.preventDefault();
+        document.getElementById("submit").disabled = true;
+        $('#save_loader').addClass('spinner-border spinner-border-sm');
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/inquiries/reply-send/',
+            data : { 
+                contact_id: $('#contact_id').val(),
+                reply: $('#reply').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if(data.sent){
+                    $('#save_loader').removeClass('spinner-border spinner-border-sm');
+                    document.getElementById("submit").disabled = false;
+                    alert("Reply Sent Successfully");
+                    window.location.href = "/sp-admin/inquiries/";
+
+                }
+                else{
+                    $('#save_loader').removeClass('spinner-border spinner-border-sm');
+                    document.getElementById("customer_help_submit").disabled = false;
+                    $("#update_alert").html("Opps! something went wrong please try again."); 
+                    $("#update_alert").addClass("alert alert-danger");
+                }
+
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

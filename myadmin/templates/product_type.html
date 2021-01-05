@@ -1,0 +1,222 @@
+{% extends 'admin_master.html' %}
+{% block title %} Product Type - SuggestPoint {% endblock %}
+{% block keywords %} Prouduct Type, Suggest Point {% endblock %}
+{% block content %} 
+
+
+      <div class="container-fluid">
+
+
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="heading_start">
+            <h1>Product Type</h1>
+            <hr>
+        </div>
+        <br/>
+        <div class="row">
+        
+            <div class="col-md-4">
+                        <h4>Add New Product Type</h4>
+                        <form id="add_type_form">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <input type="text" class="form-control" name="type_name" id="type_name" placeholder="Enter Product Type" required/>
+                            <br/>
+                            <input type="text" class="form-control" name="type_title" id="type_title" placeholder="Enter Product Type Title" required/>
+                            <br/>
+                            <select id="category" name="category" class="form-control">
+                                <option selected id="select" value="0">Select Category</option>
+                                {% for name in category_name %}
+                                <option value="{{ name.category_id }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                            <br/>
+                            <input type="text" class="form-control" name="type_slug" id="type_slug" placeholder="Enter Slug"/>
+                            <em>The “slug” is the URL-friendly version of the product type. It is usually all lowercase and contains only letters, numbers, and hyphens.</em>
+                            <br/>
+                            <textarea class="form-control" rows="5" id="type_desc" name="type_desc" placeholder="Enter Description" required></textarea>
+                           <br/> <input type="submit" name="submit" class="master_btn btn btn-success" value="Add Type"/>
+                        </form>
+                    <br/>
+            </div>
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-header">
+                      <i class="fas fa-th"></i>
+                      Product Type</div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th>Type</th>
+                              <th>Slug</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% if product_type_data %}
+                            {% for data in product_type_data %}
+                            <tr id="type-{{data.product_type_id}}">
+                                <td class="typeName" name="name">{{data.product_type_name}}</td>
+                                <td class="typeSlug" name="slug">{{data.product_type_slug}}</td>
+                                <td align="center">
+                                    <a href="/sp-admin/product-type/edit/{{ data.product_type_id }}/"><button class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Edit</button></a>
+                                    <button class="btn btn-danger btn-sm" id="delete_modal_btn" data-toggle="modal" data-id="{{ data.product_type_id }}" data-target="#myModal"><i class="fas fa-trash"></i> Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                              No Product Type
+                            {% endif %}
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="card-footer small text-muted"></div>
+            </div>
+            </div>
+        
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">			
+				<h4 class="modal-title">Delete Product Type Confirmation</h4>	
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <form id="delete_product_type_form">
+                {% csrf_token %}
+                  <div class="modal-body">
+                            <p>Are you sure you want delete to this Product Type? </p>
+                            <input type="hidden" id="product_type_id" name="product_type_id"/>
+                  </div>
+                  <div class="modal-footer">
+                            <a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger" id="submit" name="submit">Yes, delete it!</button>
+                  </div>
+            </form>
+		</div>
+	</div>
+</div>
+    
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $(document).on('submit','#add_type_form',function(e){
+        e.preventDefault();
+        var category_check = $("#category").val();
+        var slug = $("#type_slug").val();
+        var slug_check = slug.charAt(slug.length - 1)
+        if(category_check != 0 && slug_check != '-'){
+          $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/add_product_type/',
+            dataType: 'json',
+            data : { 
+                type_name: $('#type_name').val().trim(),
+                type_title: $('#type_title').val().trim(),
+                category: $('#category').val().trim(),
+                type_slug: $('#type_slug').val().trim(),
+                type_desc: $('#type_desc').val().trim(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+              if (data.type_data) {
+                  appendToTypeTable(data.type_data);
+                  $('#master_loader').hide();
+                  $("#update_alert").removeClass("alert alert-warning"); 
+                  $("#update_alert").removeClass("alert alert-danger"); 
+                  $("#update_alert").html("Product Type Added Successfully!"); 
+                  $("#update_alert").addClass("alert alert-success");
+                  $("#type_name").val('');
+                  $("#type_slug").val('');
+                  $("#type_desc").val('');
+              }else if(data.is_taken){
+                  $('#master_loader').hide();
+                  $("#update_alert").removeClass("alert alert-success"); 
+                  $("#update_alert").removeClass("alert alert-danger"); 
+                  $("#update_alert").html("Product Type already Exists!"); 
+                  $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+        }else{
+          if(slug_check == '-'){
+          $("#update_alert").removeClass("alert alert-success"); 
+          $("#update_alert").removeClass("alert alert-warning"); 
+          $("#update_alert").html("Slug Should not end with hyphen!"); 
+          $("#update_alert").addClass("alert alert-danger");
+          }else{
+          $("#update_alert").removeClass("alert alert-success"); 
+          $("#update_alert").removeClass("alert alert-warning"); 
+          $("#update_alert").html("Please Select Category!"); 
+          $("#update_alert").addClass("alert alert-danger");
+          }
+
+        }
+
+    })
+  function appendToTypeTable(type_data) {
+  $("#dataTable > tbody:last-child").append(`
+        <tr id="type_data-${type_data.type_id}">
+            <td class="typeName" name="name">${type_data.type_name}</td>
+            '<td class="typeName" name="slug">${type_data.type_slug}</td>
+            '<td align="center">
+                <button class="btn btn-success">EDIT</button>
+                <button class="btn btn-danger">DELETE</button>
+            </td>
+        </tr>
+    `);
+}
+$("#type_name").keyup(function(){
+        var Text = $(this).val();
+        Text = Text.toLowerCase();
+        Text = Text.replace(/[^a-zA-Z0-9]+/g,'-');
+        $("#type_slug").val(Text);        
+});
+
+$(document).on("click", "#delete_modal_btn", function () {
+    var id = $(this).attr('data-id');
+    $(".modal-body #product_type_id").val(id);
+})
+
+$(document).on('submit','#delete_product_type_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/product-type/delete/',
+            data : { 
+                product_type_id : $('#product_type_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if(data.deleted){
+                    alert("Product type Deleted Successfully!");
+                    location.reload();
+                }else{
+                    alert("Oops! Something went wrong please try again");
+                    location.reload();
+                }
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

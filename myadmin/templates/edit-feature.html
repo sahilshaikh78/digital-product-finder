@@ -1,0 +1,95 @@
+{% extends 'admin_master.html' %}
+{% block title %} Edit Feature - SuggestPoint {% endblock %}
+{% block keywords %} Edit Feature, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="profile_page">
+                    <div class="heading_start">
+                        <h1>Edit Feature</h1>
+                        <hr>
+                    </div>
+                    <div class="profile_main_content_start">
+                        <form id="edit_feature_form">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <input type="text" class="form-control" name="edit_feature" id="edit_feature" value="{{ feature_data.feature_name }}" placeholder="Enter Feature Name" required/>
+                            <br/>
+                            <select id="product_type" name="product_type" class="form-control" required>
+                                <option selected id="select" value="{{ feature_data.product_type }}">{{ feature_data.product_type.product_type_name }}</option>
+                                {% for data in product_type_data %}
+                                <option value="{{ data.product_type_id }}">{{ data.product_type_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <br/>
+                            <select id="feature_has_value" name="feature_has_value" class="form-control" required>
+                              {% if feature_data.feature_has_value == 'y' %}
+                                <option selected id="select" value="y">Yes (Specific Value)</option>
+                                <option value="n">No (Option Value)</option>
+                              {% else %}
+                              <option selected id="select" value="n">No (Option Value)</option>
+                              <option value="y">Yes (Specific Value)</option>
+                              {% endif %}
+                          </select>
+                          <input type="hidden" name="feature_id" id="feature_id" value="{{ feature_data.feature_id }}"/>
+                            <br/><input type="submit" name="submit" class="master_btn btn btn-success" value="Update Feature"/>
+                        </form>
+                        <br/>
+                    </div>          
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      
+ 
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).on('submit','#edit_feature_form',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/feature/update/',
+            data : { 
+                edit_feature: $('#edit_feature').val().trim(),
+                product_type: $('#product_type').val().trim(),
+                feature_has_value : $('#feature_has_value').val().trim(),
+                feature_id : $('#feature_id').val().trim(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+              if (data.updated) {
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Feature Updated Successfully!"); 
+                $("#update_alert").addClass("alert alert-success");
+              }else if(data.is_taken){
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Feature already Exists!"); 
+                $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check category data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

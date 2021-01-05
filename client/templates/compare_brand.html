@@ -1,0 +1,314 @@
+{% extends 'master.html' %}
+{% block title %} 
+{{ brand_data_1.brand_name }} vs. {{ brand_data_2.brand_name }} Comparision - SuggestPoint {% endblock %}
+{% block keywords %} Brand Profile, SuggestPoint {% endblock %}
+{% block description %} Know About Suggest Point best product, services and tools finding platform. {% endblock %}
+
+{% block content %} 
+<section>
+       <div class="comparision_top_bar">
+           <div class="comparsion_hero_section">
+               <h1><span class="brand_name">{{ brand_data_1.brand_name }}</span> vs <span class="brand_name">{{ brand_data_2.brand_name }}</span> 2020</h1>
+                <p class="comparision_tagline">Let's find out best for your needs</p>
+            <hr/>
+            </div>
+              <div class="comparision_header_inner">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-4 compare_header_bar compare_header_bar_1">
+                                
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-4 compare_header_bar compare_header_bar_2">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="img-container">
+                                            <img src="/media/{{ brand_data_1.brand_logo }}"  alt="{{ brand_data_1.brand_logo_alt_text }}" class="img_center" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p>
+                                            <center>
+                                                <a href="https://{{ brand_data_1.brand_website }}"><button class="btn btn-lg base_btn_3"><i class="fa fa-chevron-circle-right"></i> Visit Website</button></a>
+                                            </center>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-4 compare_header_bar compare_header_bar_3">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="img-container">
+                                            <img src="/media/{{ brand_data_2.brand_logo }}"  alt="{{ brand_data_2.brand_logo_alt_text }}" class="img_center" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p>
+                                            <center>
+                                                <a href="https://{{ brand_data_2.brand_website }}"><button class="btn btn-lg base_btn_3"><i class="fa fa-chevron-circle-right"></i> Visit Website</button></a>
+                                            </center>
+                                        </p>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rating_section">
+                    <div class="card">
+                        <table class="table table-hover">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table_heading_container">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="3"><i class="fas fa-star"></i> Rating</th>
+                                            </tr>
+                                        </thead>
+                                    </div>
+                                </div>
+                            </div>
+                            <tbody>
+                                    {% for key,value in rating_dict.items %}
+                                    <tr class="row" style="line-height: 3">
+                                    <td class="col-lg-4 col-md-4 col-sm-4 col-4" style="text-align: left; font-weight: bold;">{{ value.name }}</td>
+                                    <td class="col-lg-4 col-md-4 col-sm-4 col-4" style="text-align: center;">
+                                        <div class="rating">
+                                            {% if value.rating == 5.0  %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            {% elif value.rating == 4.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                            {% elif value.rating == 4.0 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating == 3.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating == 3.0 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating == 2.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>  
+                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating == 2 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating == 1.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% else %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+
+                                            {% endif %}
+                                            {{ value.rating }}
+
+                                        </div>
+                                    </td>
+                                    <td class="col-lg-4 col-md-4 col-sm-4 col-4" style="text-align: center;">
+                                        <div class="rating">
+                                            {% if value.rating_2 == 5.0  %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            {% elif value.rating_2 == 4.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                            {% elif value.rating_2 == 4.0 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating_2 == 3.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating_2 == 3.0 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating_2 == 2.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>  
+                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating_2 == 2.0 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>                                                  
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% elif value.rating_2 == 1.5 %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            {% else %}
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                                <i class="far fa-star"></i>
+
+                                            {% endif %}
+                                            {{ value.rating_2 }}
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                    {% endfor %}
+
+                            </tbody>                     
+                        </table>
+                    </div>
+
+
+                  </div>
+                  <div class="rating_section">
+                    <div class="card">
+                        <table class="table table-hover">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table_heading_container">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="3"><i class="fas fa-comments"></i> Recent Reviews</th>
+                                            </tr>
+                                        </thead>
+                                    </div>
+                                </div>
+                            </div>
+                            <tbody>
+                                    {% for review1, review2 in review_data %}
+                                    <tr class="row" style="line-height: 3">
+                                        <td class="col-lg-4 col-md-4 col-sm-4 col-4" style="text-align: left; font-weight: bold;"></td>
+                                    <td class="col-lg-4 col-md-4 col-sm-4 col-4" style="text-align: center;">
+                                        <div class="review_snippet" style="background-color: #e8edf0;">
+                                        <div class="row">
+                                                <div class="col-md-4">
+                                                    <i class="fas fa-user" style="font-size:30px;"></i><br/>
+                                                    <span style="font-size:12px;">{{ review1.user.username }}</span>
+                                                </div>
+                                                <div class="col-md-8">
+                                                        <b>{{ review1.review_title }}</b>
+                                                        <hr/>{{ review1.review }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="col-lg-4 col-md-4 col-sm-4 col-4" style="text-align: center;">
+                                        <div class="review_snippet" style="background-color: #e8edf0;">
+                                            <div class="row">
+                                                    <div class="col-md-4">
+                                                        <i class="fas fa-user" style="font-size:30px;"></i><br/>
+                                                        <span style="font-size:12px;">{{ review2.user.username }}</span>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                            <b>{{ review2.review_title }}</b>
+                                                            <hr/>{{ review2.review }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                </tr>
+                                {% endfor %}
+
+
+                            </tbody>                     
+                        </table>
+                    </div>
+
+
+                  </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="compare_decide_box" id="compare_decide_box">
+                        <h2>Time to decide which one is best for you</h2>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                                <div class="img-container">
+                                    <img src="/media/{{ brand_data_1.brand_logo }}"  alt="{{ brand_data_1.brand_logo_alt_text }}" class="img_center"/>
+                                </div>
+                                <center>
+                                    <a href="https://{{ brand_data_1.brand_website }}"><button class="btn btn-lg base_btn_3"><i class="fa fa-chevron-circle-right"></i> Go with {{ brand_data_1.brand_name }}</button></a>
+                                </center>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                                <div class="img-container">
+                                    <img src="/media/{{ brand_data_2.brand_logo }}"  alt="{{ brand_data_2.brand_logo_alt_text }}" class="img_center"/>
+                                </div>
+                                <center>
+                                    <a href="https://{{ brand_data_2.brand_website }}"><button class="btn btn-lg base_btn_3"><i class="fa fa-chevron-circle-right"></i> Go with {{ brand_data_2.brand_name }}</button></a>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+</section>
+{% endblock %}
+<!--end About Section Start-->
+{% block js %}
+<script>
+
+
+$(window).scroll(function(){
+    if ($(window).scrollTop() >= 100) {
+        $('.comparision_header_inner').addClass('fixed-header');
+    }
+    else {
+        $('.comparision_header_inner').removeClass('fixed-header');
+    }
+});
+
+
+
+</script>
+{% endblock %}
+
+

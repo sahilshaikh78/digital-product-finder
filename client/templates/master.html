@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title> {% block title %}{% endblock %}</title>
+<meta name="keywords" content="{% block keywords %}{% endblock %}" />
+
+<meta name="description" content="{% block description %}{% endblock %}" />
+ <!-- Bootstrap core CSS -->
+ <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
+ <!-- Custom fonts for this template -->
+ <link href="{% static '/font-awesome/css/all.min.css' %}" rel="stylesheet" type="text/css">
+ <link href="{% static '/css/rating.min.css' %}" rel="stylesheet" type="text/css">
+ <link href="https://fonts.googleapis.com/css?family=Muli:400i&display=swap" rel="stylesheet">
+ 
+ <!-- Custom styles for this template -->
+ <link href="{% static 'css/client.css' %}" rel="stylesheet" />
+ 
+</head>
+    <body>
+      <div id="master_loader">
+        <!--<img src="{% static 'client-side-images/image/loader.gif' %}" height="70" width="70"/>
+        <p>Loading...</p>-->
+    </div>
+        <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="main_top_nav">
+            <div class="container-fluid">
+            <a class="navbar-brand" href="/"><b>SuggestPoint</b></a>
+            <button class="navbar-toggler navbar-toggler-right collapsed" id="nav-toggle-button" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="col-sm-4 col-md-4 pull-right">
+                    <form class="navbar_search" role="search">
+                    <div class="input-group">
+                        <input type="text" class="search-query form-control" placeholder="Search for Product, Services e.g. Hosting" name="search_query">
+                        <span class="input-group-btn">
+                            <button class="btn" type="button" style="background-color:#fb641b;color:white"><span class="fas fa-search"></span></button>
+                        </span>
+                    </div>
+                    </form>
+                    </div>
+              <ul class="navbar-nav ml-auto"> 
+                <div class="dropdown">
+                  <button type="button" class="btn dropdown-toggle category_btn" data-toggle="dropdown">
+                    EXPLORE CATEGORIES
+                  </button>
+
+                  <div class="dropdown-menu category_dropdown">
+                    <div class="row">
+                        <div class="col-md-12">
+                          <h5 class="dropdown-header"><a href="/category/hosting/">Web Hosting</a></h5>
+                        </div>
+                        <div class="col-md-12">
+                          <h5 class="dropdown-header"><a href="/category/theme/">Themes</a></h5>
+                        </div>
+                        <hr>
+                        <div class="col-md-12">
+                          <h5 class="dropdown-header">Marketing Tools</h5>
+                          <a class="dropdown-item" href="/category/marketing/seo-tools/">SEO Tools</a>
+                          <a class="dropdown-item" href="/category/marketing/email-marketing-tools/">Email Marketing Tools</a>
+                        </div>
+                    </div>
+                   
+                  
+                  </div>
+                </div>
+                <li class="nav-item">
+                  <b><a class="nav-link" href="#" data-toggle="modal" data-target="#talkToExpertModal">TALK TO TECH EXPERTS</a></b>
+                </li>
+                {% if user.username %}
+                <li class="nav-item dropdown">
+                      <span class="dropdown nav-link js-scroll-trigger">
+                          <a class="dropdown-toggle" data-toggle="dropdown">
+                              <strong>Hii {{ user.username|upper }}</strong>
+                              <span class="glyphicon glyphicon-chevron-down"></span>
+                          </a>
+                          <ul class="dropdown-menu">
+                              <li>
+                                  <div class="navbar-login">
+                                      <div class="row">
+                                        <div class="container">
+                                          <div class="col-lg-12">     
+                                              <a href="/account/" class="btn btn-primary btn-block">Account Settings</a>
+                                              <br/><form name="logout_form" method="POST" action="/logout/">
+                                                     {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-block">Logout</button>
+                                               </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                              </li>
+                          </ul>
+                        </span>
+                    </li>
+      
+                {% else %}
+      
+                <a href="/login/?next={{request.path}}" class="master_btn btn"><b>REGISTER/LOGIN</b></a>
+      
+                {% endif %}
+              </ul>
+
+            </div>
+        </div>
+</nav>
+
+<div class="search-area">
+  <div class="close-btn pull-right"><button class="btn btn-lg m-3"><i class="fas fa-times"></i></button></div>
+      <div class="container">
+          <form action="">
+                      <div class="row">
+                          <div class="col-lg-8 offset-lg-2 col-sm-12 offset-sm-0">
+                                  <div class="input-group form-btn">
+                                          <input type="text" class="form-control border-bottom" placeholder="Search for Product, Services, Brand e.g. Best Web Hosting" aria-describedby="button-addon2" id="search_input" autocomplete="off">
+                                          <div class="input-group-append">
+                                            <button class="btn btn-outline-light brd-left-none border-bottom" type="submit" id="search"><i class="fa fa-search"></i></button>
+                                          </div>
+                                  </div>
+                                  <div id="search-results">
+                                  </div>
+                          </div>
+                      </div>
+          </form>
+  <div class="row">
+      <div id="top_product_type">
+        <p>Top Selling Categories</p>
+      </div>
+  </div>
+</div>
+</div>
+
+<div class="container">
+    {% for message in messages %}
+    <div class="master_client_notification alert {{ message.tags }} alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {{ message }}
+    </div>
+  {% endfor %}
+ </div>
+
+{% block content %}{% endblock %}
+<div id="compareButton">
+<button type="button" class="btn compare_btn" id="pop_compare" data-html="true" data-container="body" data-toggle="popover" data-placement="top" data-content="">
+  Compare 2 Company
+</button>
+</div>
+
+<!--footer starts from here-->
+
+<footer class="footer">
+    <div class="container bottom_border">
+    <div class="row">
+    <div class=" col-sm-4 col-md col-sm-4  col-12 col">
+    <h5 class="headin5_amrc col_white_amrc pt2">Suggest Point</h5>
+    <!--headin5_amrc-->
+    <p class="mb10">We help business owners & individuals to find best digital product to start their online presence and grow their businesses.</p>
+    <p><i class="fas fa-phone"></i>  +91-8780124771  </p>
+    <p><i class="fas fa fa-envelope"></i> info@suggestpoint.com  </p>
+    
+    
+    </div>
+    
+    <div class=" col-sm-4 col-md  col-6 col">
+        <h5 class="headin5_amrc col_white_amrc pt2">About</h5>
+        <!--headin5_amrc-->
+        <ul class="footer_ul_amrc">
+        <li><a href="/about/">About Us</a></li>
+        <li><a href="/contact/">Contact Us</a></li>
+        <li><a href="#">Help & Support</a></li>
+        <li><a href="#">SuggestPoint Blog</a></li>
+        </ul>
+        <!--footer_ul_amrc ends here-->
+        </div>
+
+    <div class=" col-sm-4 col-md  col-6 col">
+    <h5 class="headin5_amrc col_white_amrc pt2">Shopping</h5>
+    <!--headin5_amrc-->
+    <ul class="footer_ul_amrc">
+    <li><a href="#">Hosting</a></li>
+    <li><a href="#">Themes</a></li>
+    <li><a href="#">SEO Tools</a></li>
+    <li><a href="#">WordPress Plugins</a></li>
+    <li><a href="#">WordPress Theme</a></li>
+    </ul>
+    <!--footer_ul_amrc ends here-->
+    </div>
+    
+    
+    <div class=" col-sm-4 col-md  col-12 col">
+    <h5 class="headin5_amrc col_white_amrc pt2">Policy</h5>
+    <!--headin5_amrc ends here-->
+    <ul class="footer_ul_amrc">
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms & Conditions</a></li>
+        <li><a href="#">Affiliate Disclosure</a></li>
+        </ul>
+    <!--footer_ul2_amrc ends here-->
+    </div>
+    </div>
+</div>
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center pt-4 pb-4">
+                <div class="lower_bottom">
+                    <span class="bottom_logo">Suggest Point</span><br/>
+                    <span class="copyright_text">Copyright 2020 suggestpoint | All rights reserved.</span>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<!-- The Modal -->
+<div class="modal fade" id="talkToExpertModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="fas fa-users"></i> Get Experts Suggestions!</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <p>Book your expert suggestions help!<span class="badge badge-light">FREE</span></p>
+        <div id="update_alert"></div>
+
+        <form id="expert_suggestion_form">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" class="form-control" name="customer_name" id="customer_name" placeholder="Enter your name" required/>
+            </div>
+            <div class="col-md-6">
+              <input type="email" class="form-control" name="customer_email" id="customer_email" placeholder="Enter your email" required/>
+            </div>
+            <div class="col-md-6">
+              <input type="number" class="form-control" name="customer_mo_number" id="customer_mo_number" placeholder="Enter your mobile number" required/>
+            </div>
+            <div class="col-md-12">
+              <select id="suggestion_category" name="suggestion_category" class="form-control">
+                <option selected id="select" value="0">Select Suggestion Category</option>
+                <option value="1">Web Hosting</option>
+                <option value="2">Plugin</option>
+                <option value="3">Marketing Tool</option>
+                <option value="4">Theme</option>
+            </select>
+            </div>
+            <div class="col-md-12">
+              <textarea rows="3" class="form-control" name="customer_help_note" id="customer_help_note" placeholder="Say something about your requirement"></textarea>
+            </div>
+            <div class="col-md-6">
+               <button type="submit" class="btn base_btn" name="customer_help_submit" id="customer_help_submit"><span id="save_loader"></span> Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</footer>
+   <!-- Bootstrap core JavaScript -->
+  <script src="{% static '/js/jquery.min.js' %}"></script>
+  <script src="{% static '/js/jquery.validate.min.js' %}"></script>
+  <script src="{% static '/js/rating.min.js' %}"></script>
+  <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static '/js/popper.min.js' %}"></script>
+  <script src="{% static '/js/suggestpoint.js' %}"></script>
+
+
+  {% block js %}
+
+  {% endblock %}
+  
+    </body>
+</html>

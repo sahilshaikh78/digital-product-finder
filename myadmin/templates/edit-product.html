@@ -1,0 +1,194 @@
+{% extends 'admin_master.html' %}
+{% load static %}
+{% block title %} Edit Product - SuggestPoint {% endblock %}
+{% block keywords %} Edit Product, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+<!--Section Start-->
+<section>
+        <div class="top_bar">
+            <form id="edit_product_form" enctype="multipart/form-data">   
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>Edit Product</h1>                                
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" name="submit" id="add_button" class="btn btn-outline-success btn-lg"><span id="save_loader"></span> Update Product</button>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="container">
+
+        <div class="row">
+            <div class="col-md-8">
+                            <div id="update_alert"></div>
+                            <div class="row">
+                            <div class="col-md-12">
+                                    <label>Product Title</label>
+                                    <input type="text" class="form-control" name="product_title" id="product_title" value="{{ product_data.product_title }}" placeholder="Enter Product Title" required/>
+                                    <br/>
+                            </div>
+                            <div class="col-md-12">
+                                <label>Product Name:</label>
+                                  <input type="text" class="form-control" name="product_name" id="product_name" value="{{ product_data.product_name }}" placeholder="Enter Product Name" required/>
+                              </div>
+                              <br/>
+
+                              <div class="col-md-12">
+                                
+                                <label>Product Info:</label>
+                                <textarea class="form-control" rows="5" id="product_info" name="product_info" placeholder="Enter Product Info" required>{{ product_data.product_info }}</textarea>
+                                <em>Write 250-500 word bio about product.</em>
+                              </div>
+
+                              </div>
+                        
+                    <br/>
+            </div>
+            <div class="col-md-4">
+                <div class="right_side_product_setting">
+
+                    <div class="col-md-12">
+                        <label>Product Slug(URL):</label>
+                    <input type="text" class="form-control" name="product_slug" id="product_slug" value="{{ product_data.product_slug }}" placeholder="Enter Product Slug"/>
+                    <em>The “slug” is the URL-friendly version of the product name. It is usually all lowercase and contains only letters, numbers, and hyphens.</em>
+                    </div>
+                    <br/>
+                    <div class="col-md-12">
+                        <label>Product Website Link:</label>
+                    <input type="text" class="form-control" name="product_link" id="product_link" value="{{ product_data.product_link }}" placeholder="Enter Product Link"/>
+                    </div>
+                    <br/>
+                    <div class="col-md-12">
+                        <label>Product Price:</label>
+                        <div class="input-group">
+                            <div class="col-md-6">
+                                <select id="currency" name="currency" class="form-control" required>
+                                    <option selected id="select" value="{{ product_data.currency_id }}">{{ product_data.currency.currency_name }}</option>
+                                    {% for data in currency_data %}
+                                    <option value="{{ data.currency_id }}">{{ data.currency_symbol }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="product_price" id="product_price" value="{{ product_data.product_price }}" placeholder="Price" required/>
+                            </div>
+                        </div> 
+                            <div class="col-md-12">
+                                <br/>
+                                <select id="price_term" name="price_term" class="form-control" required>
+                                    {% if product_data.product_subscription == 'm' %}
+                                        <option selected value="m">Per Month</option>
+                                        <option value="y">Per Year</option>
+                                    {% else %}
+                                         <option selected value="y">Per Year</option>
+                                        <option value="m">Per Month</option>
+                                    {% endif %}
+                                </select> 
+                            </div>  
+                    </div>
+                    <br/>
+                    
+                    <div class="col-md-12">
+                        <label>Product Brand:</label>
+                        <select id="brand" name="brand" class="form-control" required>
+                            <option selected id="select" value="{{ product_data.brand_id }}">{{ product_data.brand.brand_name }}</option>
+                            {% for data in brand_data %}
+                            <option value="{{ data.brand_id }}">{{ data.brand_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <br/>
+                    <input type="hidden" name="product_id" id="product_id" value="{{ product_data.product_id }}"/>
+                    <div class="col-md-12">
+                        <label>Product Type:</label>
+                        <select id="product_type" name="product_type" class="form-control" required>
+                            <option selected id="select" value="{{ product_data.product_type_id }}">{{ product_data.product_type.product_type_name }}</option>
+                            {% for data in product_type_data %}
+                            <option value="{{ data.product_type_id }}">{{ data.product_type_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <br/>
+                    <div class="col-md-12">
+                        <label>Product Description:</label>
+                        <textarea class="form-control" rows="5" id="product_desc" name="product_desc" placeholder="Enter Product Info" required>{{ product_data.product_description }}</textarea>
+                        <em>Product Description must be of up to 65-70 character for better SEO.</em>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>   
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).on('submit','#edit_product_form',function(e){
+        e.preventDefault();
+        var delay = 3000;
+        document.getElementById("add_button").disabled = true;
+        $('#save_loader').addClass('spinner-border text-muted');
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/product/update/',
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+            success: function(data) {
+              if (data.updated) {
+                setTimeout(function() {
+                    delaySuccess(data);
+                  }, delay);
+              }else if(data.is_taken){
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Product already Exists!"); 
+                $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+    })
+
+function delaySuccess(data) {
+    $('#save_loader').removeClass('spinner-border text-primary');
+    document.getElementById("add_button").disabled = false;
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    $("#update_alert").removeClass("alert alert-warning"); 
+    $("#update_alert").removeClass("alert alert-danger"); 
+    $("#update_alert").html("Product Updated Successfully!"); 
+    $("#update_alert").addClass("alert alert-success");
+}
+$("#product_name").keyup(function(){
+        var Text = $(this).val();
+        Text = Text.toLowerCase();
+        Text = Text.replace(/[^a-zA-Z0-9]+/g,'-');
+        $("#product_slug").val(Text);        
+});
+
+
+$("#brand_logo").change(function(){
+    readURL(this);
+}); 	
+    $(function () {
+        CKEDITOR.replace('product_info', {
+            toolbar: 'Basic'
+        });
+    });
+   </script>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Login Page - SuggestPoint</title>
+<meta name="keywords" content="Login Page, Suggest Point" />
+
+<meta name="description" content="Login to SuggestPoint to get extra benefits and offers on varoius products and services." />
+ <!-- Bootstrap core CSS -->
+ <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
+ <!-- Custom fonts for this template -->
+ <link href="{% static '/font-awesome/css/all.min.css' %}" rel="stylesheet" type="text/css">
+ <link href="https://fonts.googleapis.com/css?family=Muli:400i&display=swap" rel="stylesheet">
+
+ <!-- Custom styles for this template -->
+ <link href="{% static 'css/client.css' %}" rel="stylesheet"/>
+
+</head>
+    <body class="bg-dark">
+
+<!--register Section Start-->
+
+<section>
+
+    <div class="container" style="margin-top: 40px;">
+      <h1 style="color:white;text-align: center;">SUGGEST POINT</h1>
+{% for message in messages %}
+<div class="container">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+</div>
+{% endfor %}
+        <div class="card card-login mx-auto mt-4">
+            <div class="card-header"><a href="{{ request.GET.next }}"><i class="fas fa-chevron-left" style="font-size: 20px;color:black"></i></a>
+                   <b>Login</b></div>
+                 <div class="card-body">
+                        <i><p>Login to your account to get extra benefits!</p></i>
+                        <form id="login_form" method="POST" action="/login_auth/">
+                            {% csrf_token %}
+                                    <input type="email" id="email" name="email" class="form-control" placeholder="Email Address"/>
+<br/>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Password"/>
+<br/>
+                            <b><input type="checkbox" name="remember_me" class="form-conrol"/> Remember me
+                            </b><br><br>
+                            {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+                            {% endif %}
+                            <input type="submit" name="submit" value="Login" id="login_btn" class="master_btn btn btn-lg"/>
+                            <a href="/reset-password/">Lost your password?</a>
+                        </form>
+                        <br>
+                        <b>-----------------Or Continue Using----------------</b><br/>
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.GET.next }}">
+                        <center><button class="btn btn-danger btn-lg"><img src="{% static 'client-side-images/image/google.jpg' %}" width="25" height="25" style="border-radius: 50%;"/> Google</button></center>
+                        </a>
+                        <br/>
+                        <b>Don't have an account yet? <a href="/register/?next={{ request.GET.next }}"><button type="button" class="btn btn-lg btn-outline-secondary"><b>Register Here</b></button></a></b>
+                           <br/>
+            </div>
+            </div>
+            </div>
+</section>
+<!--end signup Section Start-->
+
+   <!-- Bootstrap core JavaScript -->
+   <script src="{% static '/js/jquery.min.js' %}"></script>
+   <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+
+   <!--<script type="text/javascript">
+    $(document).on('submit','#login_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '/login_auth/',
+            data : { 
+                email: $('#email').val(),
+                password: $('#password').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if (data.login_user) {
+                  alert('success')
+                }else{
+                    alert('failed')
+                }
+            },
+        });
+    })
+
+   </script>-->
+     </body>
+ </html>

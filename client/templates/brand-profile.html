@@ -1,0 +1,884 @@
+{% extends 'master.html' %}
+{% block title %} 
+{{ category_data.category_title }} Brand Profile - SuggestPoint {% endblock %}
+{% block keywords %} Brand Profile, SuggestPoint {% endblock %}
+{% block description %} Know About Suggest Point best product, services and tools finding platform. {% endblock %}
+{% load static %}
+
+{% block content %} 
+<section>
+       <div class="profile_top_bar">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" style="color:#fff;">Home</a></li>
+                <li class="breadcrumb-item"><a href="/category/{{ category_url }}" style="color:#fff;">{{ category_url|title }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="{{ request.path }}" style="color:#fff;">{{ brand_path|title }}</a></li>
+              </ol>
+              <div class="header-inner">
+                <div class="container">
+                        <div class="row">
+                                <div class="col-md-12">
+                                       <div class="row">
+                                           <div class="col-md-12">
+                                               <div class="profile_heading_container">
+                                                <div class="img-container">
+                                                    <img src="/media/{{ brand_data.brand_logo }}"  alt="{{ brand_data.brand_logo_alt_text }}" class="text-center img-fluid" />
+                                                </div>
+                                                    <h1>{{ brand_data.brand_name }}</h1>
+                                                    <a href="https://{{ brand_data.brand_website }}" target="blank"><button class="btn master_btn float-right">Visit Website</button></a>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-12 text-center">
+                                                <nav class="nav-justified">
+                                                  <div class="nav nav-tabs " id="nav-tab" role="tablist">
+                                                    <a class="nav-item nav-link active" id="pop1-tab" href="#overview" role="tab" aria-controls="pop1" aria-selected="true">Overview</a>
+                                                    <a class="nav-item nav-link" id="pop2-tab" href="#pricing" role="tab" aria-controls="pop2" aria-selected="false">Pricing</a>
+                                                    <a class="nav-item nav-link" id="pop2-tab" href="#review" role="tab" aria-controls="pop2" aria-selected="false">Review</a>
+                                                    <a class="nav-item nav-link" id="pop3-tab" href="#alternatives" role="tab" aria-controls="pop3" aria-selected="false">Alternatives</a>
+                                                    <a class="nav-item nav-link" id="pop3-tab" href="#analysis" role="tab" aria-controls="pop3" aria-selected="false">Analysis</a>  
+                                                </div>
+                                                </nav>
+                                            </div>
+                                       </div>
+                                </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+            <div class="profile_section">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="overview_box" id="overview">
+                                        <h2>Overview</h2>
+                                        <hr/>
+                                        <p>{{ brand_data.brand_info| safe }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="price_box" id="pricing">
+                                       
+                                        <h2>{{ brand_data.brand_name }} Plans & Pricing</h2>
+                                        <hr/>
+                                        <section class="pricing py-3">
+                                            <div class="container">
+                                              <div class="row">
+                                                <!-- Free Tier -->
+                                                  
+                                        {% for product in product_data %}
+                                        <div class="col-lg-4 table_col">
+                                        <div class="card mb-5 mb-lg-0">
+                                                    <div class="card-body">
+                                                      <h5 class="card-title text-muted text-uppercase text-center">{{ product.product_name }}</h5>
+                                                      <p class="card-price text-center">
+                                                        {{ product.currency.currency_symbol }}{{ product.product_price }}{% if product.product_subscription == 'm' %}<span class="period">/month</span></p>{% elif product.product_subscription == 'y' %}<span class="period">/year</span></p>{% endif %}
+                                                      <hr>
+                                                      <ul class="fa-ul">
+                                                        {% for a in product.product_features.all %}
+                                                        {% if a.feature.feature_has_value == 'y' %}
+                                                        <li><span class="fa-li"><i class="fas fa-check"></i></span>{{ a.product_feature_value |title }} {{ a.feature.feature_name }}</li>
+                                                        {% elif a.feature.feature_has_value == 'n' and a.product_feature_value == '1' %}
+                                                        <li><span class="fa-li"><i class="fas fa-check"></i></span> {{ a.feature.feature_name }}</li>
+                                                        {% elif a.feature.feature_has_value == 'n' and a.product_feature_value == '0' %}
+                                                        <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span> {{ a.feature.feature_name }}</li>
+                                                        {% endif %}
+                                                        {% endfor %}
+  
+                                                    </ul>
+                                                     <a href="{{ product.product_link }}/" target="blank" class="btn btn-block base_btn text-uppercase">See More</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        
+                                  {% endfor %}
+
+
+                          </div>
+                        </div>
+                      </section>
+                                        <p></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="review_box" id="review">
+                                        <h2>{{ brand_data.brand_name }} Reviews & Ratings</h2>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-md-4 overall_rating_border">
+                                                <div class="overall_rating">
+                                                    <h5>Overall Rating</h5>
+                                                    <span class="bold padding-bottom-7">{{ overall_rating }}<small>/ 5</small></span>
+                                                    <div class="rating">
+                                                    {% if overall_rating == 5  %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                    {% elif overall_rating == 4.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    {% elif overall_rating == 4 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif overall_rating == 3.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif overall_rating == 3 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif overall_rating == 2.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>  
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif overall_rating == 2 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>                                                  
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% elif overall_rating == 1.5 %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star"></i>
+
+                                                    {% endif %}
+                                                </div>
+                                                <br/>
+                                                <a href="/{{ category_url }}/add-review/brand/{{ brand_path }}/"><button class="btn base_btn btn-lg">Write Review</button></a>
+                                            </div>
+                                        </div>
+                                            <div class="col-md-8">
+                                                <div class="feature_rating">
+                                                    <h5>Feature Ratings</h5>
+                                                    <div class="feature_rating_box">
+                                                        {% for key,value in feature_rating_dict.items %}
+                                                            <div class="rating_box">
+                                                                <p>{{ value.name }}</p>
+                                                                <div class="rating">
+                                                                    {% if value.rating == 5  %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                    {% elif value.rating == 4.5 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>                                                  
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star-half-alt"></i>
+                                                                    {% elif value.rating == 4 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>                                                  
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                    {% elif value.rating == 3.5 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>                                                  
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star-half-alt"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                    {% elif value.rating == 3 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>                                                  
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                    {% elif value.rating == 2.5 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>  
+                                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                    {% elif value.rating == 2 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>                                                  
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                    {% elif value.rating == 1.5 %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star-half-alt"></i>                                                
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                    {% else %}
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                                                                        <i class="far fa-star"></i>
+                
+                                                                    {% endif %}
+                                                                    {{ value.rating }}
+
+                                                                </div>
+                                                            </div><br/>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <br/>
+                                                {% for review in review_rating_data %}
+                                                <div class="review_list">
+                                                    <div class="row">
+                                                        <div class="col-md-4 review_left_part">
+                                                            <p class="review_user_name">{{ review.user.username|title }}</p><hr/>
+                                                        <div class="user_rating_box">
+                                                            <div class="user_rating_box_left">
+                                                                <p>Features</p>
+                                                            </div>
+                                                            <div class="user_rating_box_right">
+                                                            {% if review.features_rating == 5  %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                            {% elif review.features_rating == 4.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                            {% elif review.features_rating == 4 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.features_rating == 3.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.features_rating == 3 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.features_rating == 2.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>  
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.features_rating == 2 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.features_rating == 1.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+        
+                                                            {% endif %}
+        
+                                                            </div>
+                                                        </div>
+                                                        <div class="user_rating_box">
+                                                            <div class="user_rating_box_left">
+                                                                <p>Value for Money</p>
+                                                            </div>
+                                                            <div class="user_rating_box_right">
+                                                            {% if review.value_for_money_rating == 5  %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                            {% elif review.value_for_money_rating == 4.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                            {% elif review.value_for_money_rating == 4 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.value_for_money_rating == 3.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.value_for_money_rating == 3 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.value_for_money_rating == 2.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>  
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.value_for_money_rating == 2 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.value_for_money_rating == 1.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+        
+                                                            {% endif %}
+        
+                                                            </div>
+                                                        </div>
+                                                        <div class="user_rating_box">
+                                                            <div class="user_rating_box_left">
+                                                                <p>Ease of Use</p>
+                                                            </div>
+                                                            <div class="user_rating_box_right">
+                                                            {% if review.ease_of_use_rating == 5  %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                            {% elif review.ease_of_use_rating == 4.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                            {% elif review.ease_of_use_rating == 4 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.ease_of_use_rating == 3.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.ease_of_use_rating == 3 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.ease_of_use_rating == 2.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>  
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.ease_of_use_rating == 2 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.ease_of_use_rating == 1.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+        
+                                                            {% endif %}
+        
+                                                            </div>
+                                                        </div>
+                                                        <div class="user_rating_box">
+                                                            <div class="user_rating_box_left">
+                                                                <p>Customer Support</p>
+                                                            </div>
+                                                            <div class="user_rating_box_right">
+                                                            {% if review.customer_support_rating == 5  %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                            {% elif review.customer_support_rating == 4.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                            {% elif review.customer_support_rating == 4 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.customer_support_rating == 3.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.customer_support_rating == 3 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.customer_support_rating == 2.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>  
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.customer_support_rating == 2 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star"></i>                                                  
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% elif review.customer_support_rating == 1.5 %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="fas fa-star-half-alt"></i>                                                
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+                                                                <i class="far fa-star"></i>
+        
+                                                            {% endif %}
+        
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <h3 class="review_title">{{ review.review_title|title }}</h3>
+                                                            <hr/>{{ review.review }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="overview_box" id="alternatives">
+                                        <h2>{{ brand_data.brand_name }} Alternatives</h2>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="MultiCarousel" data-items="1,3,5,4" data-slide="1" id="MultiCarousel"  data-interval="1000">
+                                                <div class="MultiCarousel-inner">
+                                                    {% for alternative in alternatives_data.all %}
+                                                    <div class="card mb-4 box-shadow">
+
+                                                    {% if alternative.products.all %}
+                                                        <div class="card-header">
+                                                            <h4 class="my-0 font-weight-normal">{{ alternative.brand_name }}</h4>
+                                                        </div>
+                                                    {% endif %}
+                                                        {% for product in alternative.products.all %}
+                                                        <div class="card-body">
+                                                            <h1><b>{{ product.currency.currency_symbol }}{{ product.product_price }}</b>{% if product.product_subscription == 'm' %}<small class="text-muted">/month</small>{% elif product.product_subscription == 'y' %}<small class="text-muted">/year</small>{% endif %}
+                                                                </h1>
+                                                            <ul class="list-unstyled mt-3 mb-4">
+                                                                {% for feature in product.product_features.all %}
+                                                                <li><i class="fas fa-check"></i> {{ feature.product_feature_value| title }} {{ feature.feature.feature_name }}</li>
+                                                                {% endfor %}
+                                                            </ul> 
+                                                            <a href="/{{ product.brand.category.category_slug }}-reviews/{{ product.brand.brand_slug }}/ ">
+                                                                <button type="button" class="btn btn-lg btn-block base_btn">View Details</button>
+                                                            </a>
+                                                        </div>
+                                                        {% endfor %}
+
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <button class="btn base_btn leftLst"><i class="fas fa-arrow-left"></i></button>
+                                                <button class="btn base_btn rightLst"><i class="fas fa-arrow-right"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="overview_box" id="analysis">
+                                        <h2>{{ brand_data.brand_name }} Price Chart</h2>
+                                        <hr/>
+                                        <div class="row">
+                                            <canvas id="population-chart" data-url="/price_chart/{{ category_url }}/"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="sidebar_sticky_box" id="sidebar_sticky_box">
+                                <center>
+                                <div class="sidebar_btn">
+                                    <a href="https://{{ brand_data.brand_website }}" target="blank"><button class="btn base_btn btn-lg">Visit {{ brand_data.brand_name }}</button></a>
+                                <br/>
+                                    <a href="" data-toggle="modal" data-target="#talkToExpertModal"><button class="btn master_btn btn-lg">Request a Help</button></a>
+                                </div><hr/>
+                                {% if request.user.id %}
+                                    {% if wishlist_data == 1 %}
+                                        <form method="POST" id="remove_from_wishlist">
+                                            {% csrf_token %}
+                                            <input type="hidden" value="{{ request.user.id }}" name="user_id"/>
+                                            <input type="hidden" value="{{ brand_data.brand_id }}" name="brand_id"/>
+                                            <div class="wishlist_button">
+                                                <button type="submit" id="wishlist_remove_submit" class="btn btn-danger btn-lg">Remove from Wishlist</button>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        <form method="POST" id="add_to_wishlist">
+                                            {% csrf_token %}
+                                            <input type="hidden" value="{{ request.user.id }}" name="user_id"/>
+                                            <input type="hidden" value="{{ brand_data.brand_id }}" name="brand_id"/>
+                                            <div class="wishlist_button">
+                                                <button type="submit" id="wishlist_submit" class="btn btn-outline-danger btn-lg">Add to Wishlist</button>
+                                            </div>
+                                        </form>
+                                    {% endif %}
+                                <div id="snackbar"></div>
+                                {% else %}
+                                    <div class="wishlist_button">
+                                        <a href="/login/?next={{request.path}}" type="button" class="btn btn-outline-danger btn-lg">Add to Wishlist</a>
+                                    </div>
+                                {% endif %}
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+</section>
+{% endblock %}
+<!--end About Section Start-->
+{% block js %}
+<script src="{% static '/js/chart.js' %}"></script>
+
+<script>
+$(document).on('submit','#add_to_wishlist',function(e){
+    e.preventDefault();
+    $.ajax({
+            type:'POST',
+            url: '/save_wishlist/',
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+            success: function(data) {
+              if (data.saved) {
+ /*             $(this).attr('id', 'remove_from_wishlist'); 
+                $('#wishlist_submit').innerHTML = 'Remove From Wishlist';*/
+                var x = document.getElementById("snackbar");
+                x.innerHTML = "Added to your wishlist";
+                x.className = "show";
+                setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000);
+                }else if(data.err){
+                    var x = document.getElementById("snackbar");
+                    x.innerHTML = "Oops! Something went wrong please refresh the page & try again. ";
+                    x.className = "show";
+                    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000);                
+                }else if(data.exists){
+                    var x = document.getElementById("snackbar");
+                    x.innerHTML = "You've already added this to you wishlist";
+                    x.className = "show";
+                    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000); 
+                }
+            },
+        });
+        
+});
+
+$(document).on('submit','#remove_from_wishlist',function(e){
+    e.preventDefault();
+    $.ajax({
+            type:'POST',
+            url: '/remove_wishlist/',
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+            success: function(data) {
+              if (data.deleted) {
+                var x = document.getElementById("snackbar");
+                x.innerHTML = "Removed from Wishlist";
+                x.className = "show";
+                setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000);
+                }else if(data.err){
+                    var x = document.getElementById("snackbar");
+                    x.innerHTML = "Oops! Something went wrong please refresh the page & try again. ";
+                    x.className = "show";
+                    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000);                
+                }else if(data.not_exists){
+                    var x = document.getElementById("snackbar");
+                    x.innerHTML = "You've already removed this from your wishlist";
+                    x.className = "show";
+                    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000); 
+                }
+            },
+        });
+        
+});
+
+$(document).ready(function() {
+    $('a[href*=\\#]').on('click', function(e){
+        e.preventDefault();
+        $('html, body').animate({
+            scrollTop : $(this.hash).offset().top - 250
+        }, 2000);
+    });
+
+});
+$(window).scroll(function(){
+    if ($(window).scrollTop() >= 100) {
+        $('.header-inner').addClass('fixed-header');
+    }
+    else {
+        $('.header-inner').removeClass('fixed-header');
+    }
+});
+$(document).scroll(function() {
+
+  if ($('#sidebar_sticky_box').offset().top + $('#sidebar_sticky_box').height() >= $('.footer').offset().top - 10)
+    $('#sidebar_sticky_box').css({
+      'position': 'relative',
+      'bottom': 0,
+      'top': 'auto'
+    });
+
+  if ($(document).scrollTop() + $('#sidebar_sticky_box').height() + 117 <= $('.footer').offset().top)
+    $('#sidebar_sticky_box').css({
+      'position': 'fixed',
+      'bottom': 'auto'
+    }); // restore when you scroll up
+});
+
+$(function () {
+ 
+ $("#rateYo").rateYo({
+    rating: 1.5,
+    halfStar: true,
+   onChange: function (rating, rateYoInstance) {
+
+     $(this).next().text(rating+' stars');
+   }
+ });
+});
+$(window).on('hashchange', function() {
+    let hash = window.location.hash;
+    $('nav').closest('a').removeClass('active');
+    $('a[href=\"' + hash + '\"]').closest('a').addClass('active');
+});
+
+$(document).ready(function () {
+    var itemsMainDiv = ('.MultiCarousel');
+    var itemsDiv = ('.MultiCarousel-inner');
+    var itemWidth = "";
+
+    $('.leftLst, .rightLst').click(function () {
+        var condition = $(this).hasClass("leftLst");
+        if (condition)
+            click(0, this);
+        else
+            click(1, this)
+    });
+
+    ResCarouselSize();
+
+
+
+
+    $(window).resize(function () {
+        ResCarouselSize();
+    });
+
+    //this function define the size of the items
+    function ResCarouselSize() {
+        var incno = 0;
+        var dataItems = ("data-items");
+        var itemClass = ('.card');
+        var id = 0;
+        var btnParentSb = '';
+        var itemsSplit = '';
+        var sampwidth = $(itemsMainDiv).width();
+        var bodyWidth = $('body').width();
+        $(itemsDiv).each(function () {
+            id = id + 1;
+            var itemNumbers = $(this).find(itemClass).length;
+            btnParentSb = $(this).parent().attr(dataItems);
+            itemsSplit = btnParentSb.split(',');
+            $(this).parent().attr("id", "MultiCarousel" + id);
+
+
+            if (bodyWidth >= 1200) {
+                incno = itemsSplit[3];
+                itemWidth = sampwidth / incno;
+            }
+            else if (bodyWidth >= 992) {
+                incno = itemsSplit[2];
+                itemWidth = sampwidth / incno;
+            }
+            else if (bodyWidth >= 768) {
+                incno = itemsSplit[1];
+                itemWidth = sampwidth / incno;
+            }
+            else {
+                incno = itemsSplit[0];
+                itemWidth = sampwidth / incno;
+            }
+            $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+            $(this).find(itemClass).each(function () {
+                $(this).outerWidth(itemWidth);
+            });
+
+            $(".leftLst").addClass("over");
+            $(".rightLst").removeClass("over");
+
+        });
+    }
+
+
+    //this function used to move the items
+    function ResCarousel(e, el, s) {
+        var leftBtn = ('.leftLst');
+        var rightBtn = ('.rightLst');
+        var translateXval = '';
+        var divStyle = $(el + ' ' + itemsDiv).css('transform');
+        var values = divStyle.match(/-?[\d\.]+/g);
+        var xds = Math.abs(values[4]);
+        if (e == 0) {
+            translateXval = parseInt(xds) - parseInt(itemWidth * s);
+            $(el + ' ' + rightBtn).removeClass("over");
+
+            if (translateXval <= itemWidth / 2) {
+                translateXval = 0;
+                $(el + ' ' + leftBtn).addClass("over");
+            }
+        }
+        else if (e == 1) {
+            var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+            translateXval = parseInt(xds) + parseInt(itemWidth * s);
+            $(el + ' ' + leftBtn).removeClass("over");
+
+            if (translateXval >= itemsCondition - itemWidth / 2) {
+                translateXval = itemsCondition;
+                $(el + ' ' + rightBtn).addClass("over");
+            }
+        }
+        $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
+    }
+
+    //It is used to get some elements from btn
+    function click(ell, ee) {
+        var Parent = "#" + $(ee).parent().attr("id");
+        var slide = $(Parent).attr("data-slide");
+        ResCarousel(ell, Parent, slide);
+    }
+
+});
+$(function () {
+var $populationChart = $("#population-chart");
+var res = ['20','25','30']
+$.ajax({
+  url: $populationChart.data("url"),
+  success: function (data) {
+    var ctx = $populationChart[0].getContext("2d");
+
+            new Chart(ctx, {
+            type: 'bar',
+            
+            data: {
+                labels: data.label,
+                datasets: [{
+                label: 'Price',
+                backgroundColor: 'blue',
+                data: data.data,
+            }]          
+            },
+            options: {
+                scales: {
+                yAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Price'
+                }
+                }]
+                },   
+                responsive: true,
+                legend: {
+                position: 'top',
+                },
+                title: {
+                display: true,
+                text: 'Price Analysis'
+                }
+            }
+        });
+        }
+});
+});
+</script>
+{% endblock %}
+
+

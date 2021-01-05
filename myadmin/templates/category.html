@@ -1,0 +1,170 @@
+{% extends 'admin_master.html' %}
+{% block title %} Categories - SuggestPoint {% endblock %}
+{% block keywords %} Categories, Suggest Point {% endblock %}
+{% block content %} 
+
+
+      <div class="container-fluid">
+
+
+    <!--Section Start-->
+<section>
+    <div class="container">
+      <div class="heading_start">
+        <h1>Category</h1>
+        <hr>
+    </div>
+    <br/>
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Add New Category</h4>
+                    <form id="add_category_form">   
+                        {% csrf_token %}
+                        <div id="update_alert"></div>
+                        <input type="text" class="form-control" name="add_category" id="add_category" placeholder="Enter Category Name" required/>
+                        <br/>
+                        <input type="text" class="form-control" name="category_title" id="category_title" placeholder="Enter Category Title" required/>
+                        <br/>
+                        <input type="text" class="form-control" name="category_slug" id="category_slug" placeholder="Enter Slug"/>
+                        <em>The “slug” is the URL-friendly version of the category name. It is usually all lowercase and contains only letters, numbers, and hyphens.</em>
+                        <br/><br/><input type="submit" name="submit" class="master_btn btn btn-success" value="Add Category"/>
+                    </form>
+                  <br/>
+              </div>
+            <div class="col-md-8">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                          <i class="fas fa-th"></i>
+                          Categories</div>
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                              <thead>
+                                <tr>
+                                  <th>Category</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for data in category_data %}
+                                    <tr>
+                                        <td>{{ data.category_name }}</td>
+                                        <td>
+                                          <a href="/sp-admin/category/edit/{{ data.category_id }}/"><button class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Edit</button></a>
+                                          <button class="btn btn-danger btn-sm" id="delete_modal_btn" data-toggle="modal" data-id="{{ data.category_id }}" data-target="#myModal"><i class="fas fa-trash"></i> Delete</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="card-footer small text-muted"></div>
+                </div>
+              
+            </div>          
+        </div>
+    </div>
+</section>
+</div>
+<!-- /.container-fluid -->
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">			
+				<h4 class="modal-title">Delete Category Confirmation</h4>	
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <form id="delete_category_form">
+                {% csrf_token %}
+                  <div class="modal-body">
+                            <p>Are you sure you want delete to this category? </p>
+                            <input type="hidden" id="category_id" name="category_id"/>
+                  </div>
+                  <div class="modal-footer">
+                            <a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger" id="submit" name="submit">Yes, delete it!</button>
+                  </div>
+            </form>
+		</div>
+	</div>
+</div>      
+ 
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $(document).on('submit','#add_category_form',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/add_category/',
+            data : { 
+                add_category: $('#add_category').val().trim(),
+                category_title: $('#category_title').val().trim(),
+                category_slug : $('#category_slug').val().trim(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+              if (data.category_added) {
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Category Added Successfully!"); 
+                $("#update_alert").addClass("alert alert-success");
+                $("#add_category").val('');
+                $("#category_slug").val('');
+              }else if(data.is_taken){
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Category already Exists!"); 
+                $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check category data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+    })
+
+    $("#add_category").keyup(function(){
+        var Text = $(this).val();
+        Text = Text.toLowerCase();
+        Text = Text.replace(/[^a-zA-Z0-9]+/g,'-');
+        $("#category_slug").val(Text);        
+});
+
+$(document).on("click", "#delete_modal_btn", function () {
+    var id = $(this).attr('data-id');
+    $(".modal-body #category_id").val(id);
+})
+
+$(document).on('submit','#delete_category_form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/category/delete/',
+            data : { 
+                category_id : $('#category_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if(data.deleted){
+                    alert("Category Deleted Successfully!");
+                    location.reload();
+                }else{
+                    alert("Oops! Something went wrong please try again");
+                    location.reload();
+                }
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

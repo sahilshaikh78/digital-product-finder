@@ -1,0 +1,69 @@
+{% extends 'admin_master.html' %}
+{% block title %} Admin Settings - SuggestPoint {% endblock %}
+{% block keywords %} Admin Settings, Suggest Point {% endblock %}
+{% block content %} 
+
+
+      <div class="container-fluid">
+
+
+
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="profile_page">
+                    <div class="heading_start">
+                        <h1>Account Settings</h1>
+                        <hr>
+                    </div>
+                    <div class="profile_main_content_start">
+                        <h3>Personal information</h3>
+
+                        <form id="profile_update">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <lable>First name</lable>
+                            <input type="text" class="form-control" name="first_name" id="first_name" value="{{ request.user.first_name }}" placeholder="Enter First name" required/>
+                            <br/>
+                            <lable>Last name</lable>
+                            <input type="text" class="form-control" name="last_name" id="last_name" value="{{ request.user.last_name }}" placeholder="Enter Last name"/>
+                            <br/><input type="submit" name="submit" class="master_btn btn btn-success" value="Update Personal Information"/>
+                        </form>
+                    </div>          
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      
+ 
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+
+    $(document).on('submit','#profile_update',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/admin_info_update/',
+            data : { 
+                first_name: $('#first_name').val(),
+                last_name: $('#last_name').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                $('#master_loader').hide();
+                $("#update_alert").html("Your changes have been saved!"); 
+                $("#update_alert").addClass("alert alert-success");
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

@@ -1,0 +1,274 @@
+{% extends 'admin_master.html' %}
+{% load static %}
+{% block title %}Edit Brand - SuggestPoint {% endblock %}
+{% block keywords %}Edit Brand, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+<!--Section Start-->
+<section>
+    <div class="container">
+        <div class="heading_start">
+            <h1>Edit Brand</h1>
+            <hr>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="offset-md-2 col-md-8">
+                        <form id="edit_brand_form" enctype="multipart/form-data">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <label>Brand Name:</label>
+                                  <input type="text" class="form-control" name="brand_name" id="brand_name" value="{{ brand_data.brand_name }}" placeholder="Enter Brand Name" required/>
+                              </div>
+                              <div class="col-md-6">
+                                <label>Brand Slug(URL):</label>
+                              <input type="text" class="form-control" name="brand_slug" id="brand_slug" value="{{ brand_data.brand_slug }}" placeholder="Enter Brand Slug"/>
+                              <em>The “slug” is the URL-friendly version of the brand name. It is usually all lowercase and contains only letters, numbers, and hyphens.</em>
+                              </div>
+                              <div class="col-md-6">
+                                <label>Brand Title</label>
+                                <input type="text" class="form-control" name="brand_title" id="brand_title" value="{{ brand_data.brand_title }}" placeholder="Enter Brand Title" required/>
+                                <br/>
+                              </div>
+                              <div class="col-md-6">
+                                <label>Brand Website</label>
+                                <input type="text" class="form-control" name="brand_website" id="brand_website" value="{{ brand_data.brand_website }}" placeholder="Enter Brand Website" required/>
+                                <br/>
+                              </div>
+                              <div class="col-md-6">
+                              <label>Brand Category:</label>
+                              <select id="category" name="category" class="form-control" required>
+                                  <option selected id="select" value="{{ brand_data.category_id }}">{{ brand_data.category.category_name }}</option>
+                                  {% for data in category_data %}
+                                  <option value="{{ data.category_id }}">{{ data.category_name }}</option>
+                                  {% endfor %}
+                              </select>
+                              </div>
+                              <div class="col-md-6">
+                                <label>Brand Service Country:</label>
+                                <select id="country" name="country" class="form-control" required>
+                                  <option selected id="select" value="{{ brand_data.country_id }}">{{ brand_data.country.country_name }}</option>
+                                  {% for data in country_data %}
+                                  <option value="{{ data.country_id }}">{{ data.country_name }}</option>
+                                  {% endfor %}
+                              </select>
+                              <br/>
+                              </div>
+                              <div class="col-md-12">
+                                <label>Brand Description:</label>
+                                <textarea class="form-control" rows="5" id="brand_desc"  name="brand_desc" placeholder="Enter Brand Info" required>{{ brand_data.brand_description }}</textarea>
+                              <em>Brand Description must be of up to 65-70 character for better SEO.</em>
+                              </div>
+                              <div class="col-md-12">
+                                
+                                <label>Brand Info:</label>
+                                <textarea class="form-control" rows="5" id="brand_info" name="brand_info" placeholder="Enter Brand Info" required>{{ brand_data.brand_info }}</textarea>
+                                <em>Write 250-500 word bio about brand.</em>
+                              </div>
+                              <input type="hidden" id="brand_id" name="brand_id" value="{{ brand_data.brand_id }}"/>
+
+                              <div class="col-md-12">
+                                <br/>
+                               <input type="submit" name="submit" class="master_btn btn btn-success" value="Update Brand"/>
+                              </div>
+                              </div>
+                        
+                    <br/>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>   
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).on('submit','#edit_brand_form',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/brand/update/',
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+            success: function(data) {
+              if (data.updated) {
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Brand Updated Successfully!"); 
+                $("#update_alert").addClass("alert alert-success");
+              }else if(data.is_taken){
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Brand already Exists!"); 
+                $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+    })
+/*    $(document).on('submit','#add_brand_form',function(e){
+        e.preventDefault();
+        var category_check = $("#category").val();
+        var country_check = $("#country").val();
+        var slug = $("#brand_slug").val();
+        var brand_logo = $("#brand_logo").val();
+        var brand_info = $("#brand_info").val();
+        var slug_check = slug.charAt(slug.length - 1)
+        if(category_check != 0 && country_check != 0 && slug_check != '-'  && brand_logo != '' && brand_info != ''){
+          $('#master_loader').show();
+
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/save_brand/',
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+           /* data : { 
+
+                brand_name: $('#brand_name').val().trim(),
+                brand_slug: $('#brand_slug').val().trim(),
+                brand_title: $('#brand_title').val().trim(),
+                brand_category: $('#category').val(),
+                brand_country: $('#country').val(),
+                brand_info: $('#brand_info').val(),
+                brand_desc: $('#brand_desc').val(),
+                brand_logo: $('#brand_logo').files[0],
+                brand_logo_alt_text: $('#logo_alt_text').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+              if (data.brand_data) {
+                  $('#master_loader').hide();
+                  $("html, body").animate({ scrollTop: 0 }, "slow");
+                  $("#update_alert").removeClass("alert alert-warning"); 
+                  $("#update_alert").removeClass("alert alert-danger"); 
+                  $("#update_alert").html("Brand Added Successfully!"); 
+                  $("#update_alert").addClass("alert alert-success");
+                  $("#brand_name").val('');
+                  $("#brand_slug").val('');
+                  $("#brand_title").val('');
+                  $("#brand_info").val('');
+                  $("#brand_desc").val('');
+                  $("#brand_logo").val('');
+                  $("#logo_alt_text").val('');
+                  $("#image_path").val('');
+                  $("#img-upload").hide();
+
+              }else if(data.is_taken){
+                  $('#master_loader').hide();
+                  $("html, body").animate({ scrollTop: 0 }, "slow");
+                  $("#update_alert").removeClass("alert alert-success"); 
+                  $("#update_alert").removeClass("alert alert-danger"); 
+                  $("#update_alert").html("Brand name already Exists!"); 
+                  $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+        }else{
+          if(slug_check == '-'){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Slug Should not end with hyphen!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }else if(category_check == '0'){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Select Category!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }else if(country_check == '0'){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Select Country!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }
+          else if(brand_info == ''){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Write about Brand Info!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }else{
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-danger"); 
+            $("#update_alert").html("Please Choose Image!"); 
+            $("#update_alert").addClass("alert alert-warning");
+          }
+
+        }
+
+    })*/
+$("#brand_name").keyup(function(){
+        var Text = $(this).val();
+        Text = Text.toLowerCase();
+        Text = Text.replace(/[^a-zA-Z0-9]+/g,'-');
+        $("#brand_slug").val(Text);        
+});
+
+$(document).on('change', '.btn-file :file', function() {
+var input = $(this),
+  label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+input.trigger('fileselect', [label]);
+});
+
+$('.btn-file :file').on('fileselect', function(event, label) {
+    
+    $("#image_upload_note").hide();
+    var input = $(this).parents('.input-group').find(':text'),
+        log = label;
+    
+    if( input.length ) {
+        input.val(log);
+    } else {
+        if( log ) alert(log);
+    }
+  
+});
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function (e) {
+            $('#img-upload').attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#brand_logo").change(function(){
+    readURL(this);
+}); 	
+    $(function () {
+        CKEDITOR.replace('brand_info', {
+            toolbar: 'Basic'
+        });
+    });
+   </script>
+{% endblock %}

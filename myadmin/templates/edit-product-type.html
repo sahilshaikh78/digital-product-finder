@@ -1,0 +1,94 @@
+{% extends 'admin_master.html' %}
+{% block title %} Edit Product Type - SuggestPoint {% endblock %}
+{% block keywords %} Edit Product Type, Suggest Point {% endblock %}
+{% block content %} 
+
+<div class="container-fluid">
+    <!--Section Start-->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="profile_page">
+                    <div class="heading_start">
+                        <h1>Edit Product Type</h1>
+                        <hr>
+                    </div>
+                    <div class="profile_main_content_start">
+                        <form id="edit_product_type_form">   
+                            {% csrf_token %}
+                            <div id="update_alert"></div>
+                            <input type="text" class="form-control" name="edit_product_type_name" id="edit_product_type_name" value="{{ product_type_data.product_type_name }}" placeholder="Enter Product Type Name" required/>
+                            <br/>
+                            <input type="text" class="form-control" name="edit_product_type_title" id="edit_product_type_title" value="{{ product_type_data.product_type_title }}" placeholder="Enter Product Type Title" required/>
+                            <br/>
+                            <select id="category" name="category" class="form-control">
+                                <option selected id="select" value="{{ product_type_data.category.category_id }}">{{ product_type_data.category.category_name }}</option>
+                                {% for data in category_data %}
+                                <option value="{{ data.category_id }}">{{ data.category_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <br/>
+                            <input type="text" class="form-control" name="edit_product_type_slug" id="edit_product_type_slug" value="{{ product_type_data.product_type_slug }}" placeholder="Enter Product Type Slug"/>
+                            <em>The “slug” is the URL-friendly version of the product type. It is usually all lowercase and contains only letters, numbers, and hyphens.</em>
+                            <br/>
+                            <input type="hidden" name="product_type_id" id="product_type_id" value="{{ product_type_data.product_type_id }}"/>
+                            <textarea class="form-control" rows="5" id="edit_product_type_desc" name="edit_product_type_desc" placeholder="Enter Description" required>{{ product_type_data.product_type_description }}</textarea>
+                           <br/> <input type="submit" name="submit" class="master_btn btn btn-success" value="Update Product Type"/>
+                        </form>
+                        <br/>
+                    </div>          
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+      
+ 
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).on('submit','#edit_product_type_form',function(e){
+        e.preventDefault();
+        $('#master_loader').show();
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/product-type/update/',
+            data : { 
+                edit_product_type_name: $('#edit_product_type_name').val().trim(),
+                edit_product_type_title: $('#edit_product_type_title').val().trim(),
+                category : $('#category').val().trim(),
+                edit_product_type_slug : $('#edit_product_type_slug').val().trim(),
+                edit_product_type_desc : $('#edit_product_type_desc').val().trim(),
+                product_type_id : $('#product_type_id').val().trim(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+              if (data.updated) {
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Product Type Updated Successfully!"); 
+                $("#update_alert").addClass("alert alert-success");
+              }else if(data.is_taken){
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-danger"); 
+                $("#update_alert").html("Product Type already Exists!"); 
+                $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#master_loader').hide();
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check category data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+    })
+
+   </script>
+{% endblock %}

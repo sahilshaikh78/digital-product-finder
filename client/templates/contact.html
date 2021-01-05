@@ -1,0 +1,106 @@
+{% extends 'master.html' %}
+{% block title %} Contact Us - SuggestPoint {% endblock %}
+{% block keywords %} Contact Us, Suggest Point {% endblock %}
+{% block description %} Contact SuggestPoint anytime by email or filling contact form. {% endblock %}
+
+{% block content %} 
+
+<!--About Section Start-->
+<section>
+    <div class="container">
+        <div class="static_page">
+        <div class="heading_start">
+            <h1>Contact Us</h1>
+            <hr>
+            <div class="static_main_content_start">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>Leave Message here!</h2>
+                        <hr>
+                        <div id="update_alert"></div>
+                        <!--<i class="fas fa-envelope-square" style="color:#fb641b;font-size: 40px;"></i>-->
+                        <form name="contact" id="contact">
+                            {% csrf_token %}
+                            <input type="text" id="name" name="name" class="form-control" placeholder="Name" required><br>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" required/><br>
+                            <input type="text" id="mobile" name="mobile" class="form-control" placeholder="Mobile" required/><br>
+                            <textarea class="form-control" rows="5" id="msg" name="msg" placeholder="Message" required></textarea>
+                            <br><button type="submit" name="submit" class="inquiry_submit btn btn-lg" style="background-color:#fb641b;color:white">Submit</button>
+                            <br/><span id="inquiry_send_loader" class="spinner-grow text-success" style="visibility: hidden;"> Inquiry Sending...</span>
+                            <br/>
+                            <div class="alert alert-success" style="visibility: hidden;">
+                                <strong>Success!</strong>Thank you for contacting us. We will contact you soon!
+                              </div>
+                        </form>
+                       
+                    </div>
+                    <div class="col-md-6">
+                        <b>Corporate Office</b><br/>
+                        SuggestPoint Pvt.Ltd.<br/>
+                        2nd floor, City Squre<br/>
+                        Lunsikui Road,Navsari<br/>
+                        Pin Code-396445<br/><br/>
+
+                        <b>Support</b><br/>
+                        Email to get Help and Support<br/>
+                        help@suggestpoint.com<br/><br/>
+                        
+                        <b>For Business Inquiry</b><br/>
+                        partner@suggestpoint.com<br/><br/>
+                    </div>
+
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!--end About Section Start-->
+
+{% endblock %}
+
+{% block js %} 
+<script type="text/javascript">
+
+    $(document).on('submit','#contact',function(e){
+        e.preventDefault();
+        var customer_mo = $("#mobile").val().length;
+        if(customer_mo != 0 && customer_mo == 10){
+            $.ajax({
+                type:'POST',
+                url: '/user/send_inquiry/',
+                data:{
+                    name:$('#name').val(),
+                    email:$('#email').val(),
+                    mobile:$('#mobile').val(),
+                    message:$('#msg').val(),
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                beforeSend: function () {
+                    $('#inquiry_send_loader').css('visibility', 'visible');
+                },
+                success:function(){
+                    $("#update_alert").html(""); 
+                    $("#update_alert").removeClass("alert alert-danger");
+                    $('#inquiry_send_loader').css('visibility', 'hidden');
+                    $("#contact").find("input[type=text],input[type=email], textarea").val("");
+                    $('.alert').css('visibility', 'visible');
+                }
+
+            });
+        }else if(customer_mo != 10){
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Mobile Number must be of 10 Digit!"); 
+            $("#update_alert").addClass("alert alert-danger");
+        }else{
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Oops! something went wrong please check your data or refresh page and try again"); 
+            $("#update_alert").addClass("alert alert-danger");
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'master.html' %}
+{% block title %} All Categories - SuggestPoint {% endblock %}
+{% block keywords %} All Categories, Suggest Point {% endblock %}
+{% block description %} Know About Suggest Point best product, services and tools finding platform. {% endblock %}
+
+{% block content %} 
+
+<!--About Section Start-->
+<section>
+    <div class="container">
+        <div class="category_page">
+            <div class="heading_start">
+                <h1 style="font-size: 50px">All Categories</h1>                
+            </div>
+            <section class="container">
+                <div class="top_selling_category text-center mt-3">
+                    <div class="row">
+                      <div class="col-md-3 col-sm-4 col-xs-6">
+                        <a href="/category/hosting/">
+                          <div class="category_outer">
+                              <i class="fas fa-server"></i>
+                              <hr/>
+                              <lable class="category_label">Web Hosting</lable>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-3 col-sm-4 col-xs-6">
+                        <a href="/category/theme/">
+                          <div class="category_outer">
+                            <i class="fas fa-file"></i>
+                            <hr/>
+                            <lable class="category_label">Theme</lable>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-3 col-sm-4">
+                        <a href="/category/plugin/">
+                          <div class="category_outer">
+                            <i class="fab fa-wordpress"></i>
+                            <hr/>
+                            <lable class="category_label">WordPress Plugin</lable>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-3 col-sm-4">
+                        <a href="/category/marketing/">
+                          <div class="category_outer">
+                            <i class="fas fa-funnel-dollar"></i>
+                            <hr/>
+                            <lable class="category_label">Marketing Tools</lable>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                </div>
+                
+            </section>
+            <section class="sub_category">
+                <h2>All Product by Category</h2>
+                <hr/>
+                {% for data in category_data %}
+                    <h3><a href="/category/{{ data.category_slug }}/">{{ data.category_name| title }}</a></h3>
+                    <ul>
+                        {% for product_type in data.product_types.all %}
+                            <li><a href="/category/{{ data.category_slug }}/{{ product_type.product_type_slug }}/">{{ product_type.product_type_name| title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+
+            </section>
+        </div>
+    </div>
+</section>
+<!--end About Section Start-->
+
+{% endblock %}
+

@@ -1,0 +1,158 @@
+{% extends 'admin_master.html' %}
+{% load static %}
+{% block title %} Edit and View Product Features - SuggestPoint {% endblock %}
+{% block keywords %}  Edit and View Product Features, Suggest Point {% endblock %}
+{% block content %} 
+
+      <div class="container-fluid">
+
+    <!--Section Start-->
+<section>
+        <div class="top_bar">
+            <form id="add_feature_form" enctype="multipart/form-data">   
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>Edit {{ product_data.product_name }} Features</h1>                                
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" name="submit" id="add_button" class="btn btn-outline-success btn-lg"><span id="save_loader"></span> Update</button>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="update_alert"></div>
+                <div class="row">
+                    <div class="col-md-12">   
+                        <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th>Features</th>
+                                <th>Value</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in features_data %}
+                                    <tr>
+                                        {% if data.feature_has_value != 'n' %}
+                                            <td>{{ data.feature_name }}</td>
+                                            <td><input type="text" name="{{ features_data.count }}" id="{{ data.feature_name }}" placeholder="Enter {{ data.feature_name }}" class="form-control" required/></td>
+                                        {% else %}
+                                            <td>{{ data.feature_name }}</td>
+                                            <td>
+                                                <select id="{{ data.feature_name }}" name="{{ counter }}" class="form-control" required>
+                                                    <option selected id="select" value="yes">Yes</option>
+                                                    <option value="no">No</option>
+                                                </select>
+                                            </td>
+                                        {% endif %}
+                                    </tr>        
+                                {% endfor %}
+                            </tbody>
+                          </table>
+                          <input type="hidden" name="1" id="1" value="{{ features_data.count }}"/>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+      </div>
+      <!-- /.container-fluid -->
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $(document).on('submit','#add_feature_form',function(e){
+        e.preventDefault();
+        var delay = 3000;
+        var product_type_check = $("#product_type").val();
+        var feature_count = $("#1").val();
+        alert(feature_count);
+
+        if(product_type_check != 0 && brand_check != 0 && slug_check != '-'  && product_info != ''){
+        document.getElementById("add_button").disabled = true;
+        $('#save_loader').addClass('spinner-border text-muted');
+
+        $.ajax({
+            type:'POST',
+            url: '/sp-admin/add_product/',
+            data: new FormData(this),
+            contentType:false,
+            processData:false,
+            success: function(data) {
+              if (data.product_data) {
+                  setTimeout(function() {
+                    delaySuccess(data);
+                  }, delay);
+              }else if(data.is_taken){
+                  $('#save_loader').removeClass('spinner-border text-muted');
+                  document.getElementById("add_button").disabled = false;
+                  $("html, body").animate({ scrollTop: 0 }, "slow");
+                  $("#update_alert").removeClass("alert alert-success"); 
+                  $("#update_alert").removeClass("alert alert-danger"); 
+                  $("#update_alert").html("Product already Exists!"); 
+                  $("#update_alert").addClass("alert alert-warning");
+              }else{
+                $('#save_loader').removeClass('spinner-border text-muted');
+                document.getElementById("add_button").disabled = false;
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+                $("#update_alert").removeClass("alert alert-success"); 
+                $("#update_alert").removeClass("alert alert-warning"); 
+                $("#update_alert").html("Opps! Something Went wrong please check data!"); 
+                $("#update_alert").addClass("alert alert-danger");
+              }
+            },
+        });
+        }else{
+          if(slug_check == '-'){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Slug Should not end with hyphen!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }else if(product_type_check == '0'){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Select Product Type!"); 
+            $("#update_alert").addClass("alert alert-danger");
+            }else if(brand_check == '0'){
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please Select Product Brand!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }else{
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("#update_alert").removeClass("alert alert-success"); 
+            $("#update_alert").removeClass("alert alert-warning"); 
+            $("#update_alert").html("Please write about Product Info!"); 
+            $("#update_alert").addClass("alert alert-danger");
+          }
+        }
+
+    });
+function delaySuccess(data) {
+    $('#save_loader').removeClass('spinner-border text-primary');
+    document.getElementById("add_button").disabled = false;
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    $("#update_alert").removeClass("alert alert-warning"); 
+    $("#update_alert").removeClass("alert alert-danger"); 
+    $("#update_alert").html("Product Added Successfully!"); 
+    $("#update_alert").addClass("alert alert-success");
+    $("#product_name").val('');
+    $("#product_slug").val('');
+    $("#product_title").val('');
+    $("#product_info").val('');
+    $("#product_desc").val('');
+}
+
+
+   </script>
+{% endblock %}
