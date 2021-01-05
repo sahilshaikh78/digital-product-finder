@@ -27,7 +27,7 @@ SECRET_KEY = '^vzy1b_^sak&wh=i_-y=s_qkj#x!j_tlqrqwi1gx21w-rx+z24'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [127.0.0.1]
+ALLOWED_HOSTS = ['127.0.0.1','digital-product-finder.herokuapp.com']
 
 
 # Application definition
