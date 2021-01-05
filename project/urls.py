@@ -19,8 +19,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth import views as auth_views
-from django.view.static import serve
-from django.conf.urls import url
 
 admin.site.site_header = "Suggest Point"
 
@@ -36,8 +34,6 @@ urlpatterns = [
     path('reset-password/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset-password/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    url(r'^media/(?P<path>.*)$', serve,{'document_root':       settings.MEDIA_ROOT}), 
-    url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
 
 ]+ static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
